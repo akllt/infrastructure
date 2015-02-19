@@ -12,70 +12,70 @@ inventorizaciją, kab būtų aišku ką kraustyti, ko ne.
 
   Serveryje veikia šie servisai:
 
-  - Apache::
+  - Apache:
 
-    .. list-table:: Frozen Delights!
+    .. list-table::
 
-      * - http://akl.lt
-        - Zope 2.12
-        - ``/srv/zopes/akl-2.12``
-        -
-      * - http://ideja.akl.lt
-        - Zope 2.12
-        - ``/srv/zopes/akl-2.12``
-        -
-      * - http://lietuvybe.org
-        - Zope 2.12
-        - ``/srv/zopes/akl-2.12``
-        - (Matyt reikėtų nukreipti į lietuvybe.lt)
-      * - http://debian.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        -
-      * - http://gnome.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        -
-      * - http://mokslui.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        - (DNS rodo į dogma)
-      * - http://pycon.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        -
-      * - http://plone.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        -
-      * - http://wiki.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/akl``
-        -
-      * - http://mode.esu.as
-        - Zope 2.10
-        - ``/srv/zopes/mode``
-        -
-      * - http://nariai.akl.lt
-        - Zope 2.10
-        - ``/srv/zopes/mode``
-        -
-      * - http://baltix.akl.lt
-        - Zope 2.9
-        - ``/srv/zopes/baltix``
-        -
-      * - http://planetdjango.org
-        -
-        - ``/home/adomas/planetdjango/html``
-        -
-      * - http://vejas.akl.lt
-        -
-        - ``/srv/vejas/www/``
-        -
-      * - http://lists.akl.lt
-        - Mailmain
-        - ``/usr/lib/cgi-bin/mailman``
-        -
+       * - http://akl.lt
+         - Zope 2.12
+         - ``/srv/zopes/akl-2.12``
+         -
+       * - http://ideja.akl.lt
+         - Zope 2.12
+         - ``/srv/zopes/akl-2.12``
+         -
+       * - http://lietuvybe.org
+         - Zope 2.12
+         - ``/srv/zopes/akl-2.12``
+         - (Matyt reikėtų nukreipti į lietuvybe.lt)
+       * - http://debian.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         -
+       * - http://gnome.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         -
+       * - http://mokslui.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         - (DNS rodo į dogma)
+       * - http://pycon.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         -
+       * - http://plone.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         -
+       * - http://wiki.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/akl``
+         -
+       * - http://mode.esu.as
+         - Zope 2.10
+         - ``/srv/zopes/mode``
+         -
+       * - http://nariai.akl.lt
+         - Zope 2.10
+         - ``/srv/zopes/mode``
+         -
+       * - http://baltix.akl.lt
+         - Zope 2.9
+         - ``/srv/zopes/baltix``
+         -
+       * - http://planetdjango.org
+         -
+         - ``/home/adomas/planetdjango/html``
+         -
+       * - http://vejas.akl.lt
+         -
+         - ``/srv/vejas/www/``
+         -
+       * - http://lists.akl.lt
+         - Mailmain
+         - ``/usr/lib/cgi-bin/mailman``
+         -
 
   - Jabber [ ``ejabberd``, ``jabber-pymsn``, ``pyicqt`` ]
 
@@ -150,55 +150,55 @@ inventorizaciją, kab būtų aišku ką kraustyti, ko ne.
 
     Veikia, naudojama:
 
-      - http://autocorr.akl.lt
-      - http://forumai.akl.lt
-      - http://gimp.akl.lt
-      - http://kde.akl.lt
-      - http://locost.lt
-      - http://mozilla.lt
-      - http://opensuse.lt
-      - http://planet.akl.lt
-      - http://stats.akl.lt
-      - http://ubuntu.lt
-      - http://webmail.akl.lt
+    - http://autocorr.akl.lt
+    - http://forumai.akl.lt
+    - http://gimp.akl.lt
+    - http://kde.akl.lt
+    - http://locost.lt
+    - http://mozilla.lt
+    - http://opensuse.lt
+    - http://planet.akl.lt
+    - http://stats.akl.lt
+    - http://ubuntu.lt
+    - http://webmail.akl.lt
 
     Veikia, nukreipimai:
 
-      - http://atvirasalus.lt
-      - http://haiku-os.lt
-      - http://lietuvybe.lt
+    - http://atvirasalus.lt
+    - http://haiku-os.lt
+    - http://lietuvybe.lt
 
     Veikia, nebenaudojama:
 
-      - http://blog.akl.lt
-      - http://coder.akl.lt
-      - http://coders.akl.lt
-      - http://ec.akl.lt
-      - http://guniqueapp.akl.lt
-      - http://pagalba.akl.lt
-      - http://slackware.akl.lt
+    - http://blog.akl.lt
+    - http://coder.akl.lt
+    - http://coders.akl.lt
+    - http://ec.akl.lt
+    - http://guniqueapp.akl.lt
+    - http://pagalba.akl.lt
+    - http://slackware.akl.lt
 
     Neveikia:
 
-      - http://arkliotakeliai.wonhwado.lt
-      - http://filezilla.akl.lt
-      - http://gnome.lt
-      - http://latex.akl.lt
-      - http://lekp.akl.lt
-      - http://linux.akl.lt
-      - http://lpm.akl.lt
-      - http://mokslas.akl.lt
-      - http://mokslui.akl.lt
-      - http://programos.akl.lt
-      - http://soft.akl.lt
-      - http://suse.akl.lt
-      - http://svietimas.akl.lt
-      - http://vytis.akl.lt
+    - http://arkliotakeliai.wonhwado.lt
+    - http://filezilla.akl.lt
+    - http://gnome.lt
+    - http://latex.akl.lt
+    - http://lekp.akl.lt
+    - http://linux.akl.lt
+    - http://lpm.akl.lt
+    - http://mokslas.akl.lt
+    - http://mokslui.akl.lt
+    - http://programos.akl.lt
+    - http://soft.akl.lt
+    - http://suse.akl.lt
+    - http://svietimas.akl.lt
+    - http://vytis.akl.lt
 
 - Serveris faktas.akl.lt [ ? ]
 
   Neveikia:
 
-    - http://ftp.akl.lt
-    - http://files.akl.lt
-    - http://mirror.akl.lt
+  - http://ftp.akl.lt
+  - http://files.akl.lt
+  - http://mirror.akl.lt
