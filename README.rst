@@ -6,6 +6,8 @@ Mykolas kaip tik tarasi dėl to su VU.
 Kad kraustymąsis būtų sklandesnis, noriu padaryti AKL serverių ūkio
 inventorizaciją, kab būtų aišku ką kraustyti, ko ne.
 
+.. contents::
+
 Serveris ideja.akl.lt [ Ubuntu 10.04.4 LTS ]
 ============================================
 
