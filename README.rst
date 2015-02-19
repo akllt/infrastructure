@@ -1,17 +1,13 @@
-Ko gero, ansčiau ar vėliau, teks kraustyti AKL serverius iš fizinių dėžių į
-virtualius serverius.
-
-Mykolas kaip tik tarasi dėl to su VU.
-
-Kad kraustymąsis būtų sklandesnis, noriu padaryti AKL serverių ūkio
-inventorizaciją, kab būtų aišku ką kraustyti, ko ne.
+#################
+AKL serverių ūkis
+#################
 
 .. contents:: Turinys
 
-Serveris ideja.akl.lt [ Ubuntu 10.04.4 LTS ]
-============================================
+Serveris ideja.akl.lt
+=====================
 
-.. note::
+:OS: Ubuntu 10.04.4 LTS
 
    Šiame serveyje šiuo metu veikia tik vienas diskas, kitas nebeveikia.
 
@@ -154,8 +150,10 @@ Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
   baltix.akl.lt/    8023   /etc/init.d/zope2.9
   akl.lt/aklv2      8022   /etc/init.d/zope2.8
 
-Serveris dogma.akl.lt [ Debian GNU/Linux 6.0 ]
-==============================================
+Serveris dogma.akl.lt
+=====================
+
+:OS: Debian GNU/Linux 6.0
 
 Apache
 ------
@@ -210,8 +208,37 @@ Neveikia:
 Serveris faktas.akl.lt [ ? ]
 ============================
 
+:OS: ?
+
 Neveikia:
 
 - http://ftp.akl.lt
 - http://files.akl.lt
 - http://mirror.akl.lt
+
+
+Migravimo planas į virtualius serverius
+=======================================
+
+Kadangi šiuo metu yra trys skirtingi serveriai, turintys labai daug skirtingų
+projektų, tarp kurių nemaža dalis yra pasenusių, siūlau visus esamus projektus
+aprašyti į Dockerfile_ ir talpinti į vieną serverį Docker_ konteineriuose.
+
+Tokiu būdu, viename serveryje bus galima tvarkingai talpinti visus projektus,
+nereikės skirtingų serverių Python'ui, PHP'ui ir pan.
+
+Be to Dockerfile_ užtikrins projekto paleidimo atkartojamumą, todėl jei
+ateityje reikės kraustytis į kokį nors kitą serverį, arba reikės atnaujinti
+sistemą, tai migravimas bus paprastesnis ir vienintelis reikalavimas serveriui
+bus Docker_ palaikymas.
+
+Galiausiai visi Dockerfile_'ai bus apjungti naudojant Fig_ ir saugomi vienoje
+repozitorijoje, todėl bus aišku, kas vyksta su projektais, kada paskutinį kartą
+jie buvo atnaujinti, kas ką naudoja ir pan.
+
+To tarpu host serveris bus iš esmės tuščias, jame suksis tik Docker_
+konteineriai ir tvarkingai bus padėti taip vadinamie *docker volumes*.
+
+.. _Dockerfile: https://docs.docker.com/reference/builder/
+.. _Docker: https://www.docker.com/
+.. _Fig: http://www.fig.sh/
