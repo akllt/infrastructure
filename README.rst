@@ -84,7 +84,7 @@ Jabber
 - ``jabber-pymsn``
 - ``pyicqt``
 
-:Rimo pastabos:
+Rimo pastabos:
 - Mūsų XMPP servisas neatnaujintas daugybę metų ir veikia nepatikimai. Panašu, kad juo besinaudoja vos keletas žmonių. Galbūt būtų visom prasmėm protinga tiesiog suinstaliuoti naują XMPP serverį ir leisti jame registruotis?
 - O gal XMPP paskyros turėtų būti sujungtos su @akl.lt el. pašto paskyromis?
 - O gal mums turėti nuosavo XMPP serverio išvis nebereikia?
