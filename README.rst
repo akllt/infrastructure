@@ -27,7 +27,7 @@ Apache
    * - http://lietuvybe.org
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
-     - NEAKTUALI: 2012 m. visa aktuali info perkelta į http://lietuvybė.lt/
+     - NEAKTUALI: 2012 m. visa aktuali info perkelta į http://lietuvybe.lt/
    * - http://debian.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
@@ -174,7 +174,7 @@ Veikia, naudojama:
 - http://forumai.akl.lt
 - http://gimp.akl.lt
 - http://kde.akl.lt
-- http://lietuvybė.lt
+- http://lietuvybe.lt
 - http://locost.lt
 - http://opensuse.lt
 - http://planet.akl.lt
