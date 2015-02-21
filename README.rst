@@ -19,43 +19,43 @@ Apache
    * - http://akl.lt
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
-     -
+     - taps NEAKTUALI, užbaigus naują akl.lt
    * - http://ideja.akl.lt
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
-     -
+     - NEAKTUALI: http://tinyurl.com/newgy5r
    * - http://lietuvybe.org
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
-     - (Matyt reikėtų nukreipti į lietuvybe.lt)
+     - NEAKTUALI: 2012 m. visa aktuali info perkelta į http://lietuvybė.lt/
    * - http://debian.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     -
+     - NEAKTUALI: nuo 2006-ųjų neveikia (http://tinyurl.com/q2sxght), 2005-aisiais permesdavo į http://debian.home.lt/
    * - http://gnome.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     -
+     - NEAKTUALI: svetainė apleista iškart ją įkūrus (http://tinyurl.com/o7tgas4)
    * - http://mokslui.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     - (DNS rodo į dogma)
+     - Projektas stagnuoja: DVD atvaizdis neatnaujintas nuo 2008 m. Dėl naudingumo ir reikalingumo galėtų pakomentuoti Jurgis. DNS rodo į dogma (tai kad nerodo)
    * - http://pycon.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     -
+     - Kiek būtų sunku migruoti? Kiek šitoje svetainėje informacijos?
    * - http://plone.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     -
+     - Labai seniai neatnaujinta, ir panašu, kad vargiai beaktuali svetainė (?)
    * - http://wiki.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     -
+     - labai menkai naudotas vikis, paskutiniai pakeitimai 2012 m. Gal pavyktų išeksportuoti info ir importuoti kitur?
    * - http://mode.esu.as
      - Zope 2.10
      - ``/srv/zopes/mode``
-     -
+     - Modesto Liudavičiaus <mode@esu.as> asmeninis fotoalbumas.
    * - http://nariai.akl.lt
      - Zope 2.10
      - ``/srv/zopes/mode``
@@ -63,19 +63,19 @@ Apache
    * - http://baltix.akl.lt
      - Zope 2.9
      - ``/srv/zopes/baltix``
-     -
+     - Mantas galėtų pakomentuoti dėl šitos svetainės sudėtingumo ir ar galima ją atnaujinti.
    * - http://planetdjango.org
      -
      - ``/home/adomas/planetdjango/html``
-     -
+     - BEPROBLEMŲ: projektas pernai užgesintas ir pakeistas dviem statiniais failais: http://tinyurl.com/n8ys6z2
    * - http://vejas.akl.lt
      -
      - ``/srv/vejas/www/``
-     -
+     - Alberto projektas, gal būtų nesunkiai migruojamas?
    * - http://lists.akl.lt
-     - Mailmain
+     - Mailman
      - ``/usr/lib/cgi-bin/mailman``
-     -
+     - BEPROBLEMŲ: http://packages.ubuntu.com/search?keywords=mailman
 
 Jabber
 ------
@@ -84,8 +84,15 @@ Jabber
 - ``jabber-pymsn``
 - ``pyicqt``
 
+:Rimo pastabos:
+- Mūsų XMPP servisas neatnaujintas daugybę metų ir veikia nepatikimai. Panašu, kad juo besinaudoja vos keletas žmonių. Galbūt būtų visom prasmėm protinga tiesiog suinstaliuoti naują XMPP serverį ir leisti jame registruotis?
+- O gal XMPP paskyros turėtų būti sujungtos su @akl.lt el. pašto paskyromis?
+- O gal mums turėti nuosavo XMPP serverio išvis nebereikia?
+
+
 Mailman
 -------
+Vargu, ar būtų problemų migruojantis – „Mailman“ per pastaruosius metus nelabai keitėsi, o trečioji jo versija dar neužbaigta ir neišleista.
 
 Named (DNS)
 -----------
@@ -94,9 +101,11 @@ Named (DNS)
 
     zone akl.lt
     zone baltix.lv
-    zone gnome.lt
-    zone mozilla.lt
-    zone wonhwado.lt
+    zone gnome.lt      // sprendžiant iš whois.lt, ši zona dabar gyvena serveriai.lt. NEAKTUALI?
+    zone mozilla.lt    // NEAKTUALI – ši zona dabar laikoma „Mozillos“ serveriuose
+    zone wonhwado.lt   // sprendžiant iš whois.lt, ši zona dabar gyvena domreg.lt. NEAKTUALI?
+
+Bet kuriuo atveju, „Bind“ atnaujinti nebūtų sunku.
 
 Zope
 ----
@@ -164,8 +173,8 @@ Veikia, naudojama:
 - http://forumai.akl.lt
 - http://gimp.akl.lt
 - http://kde.akl.lt
+- http://lietuvybė.lt
 - http://locost.lt
-- http://mozilla.lt
 - http://opensuse.lt
 - http://planet.akl.lt
 - http://stats.akl.lt
@@ -176,7 +185,6 @@ Veikia, nukreipimai:
 
 - http://atvirasalus.lt
 - http://haiku-os.lt
-- http://lietuvybe.lt
 
 Veikia, nebenaudojama:
 
@@ -209,6 +217,8 @@ Serveris faktas.akl.lt [ ? ]
 ============================
 
 :OS: ?
+
+Serveryje turėjo „suktis“ tik HTTP ir FTP servisas. Serveris užgęso 2012 m., vėliau buvo dalinai, bet tik dalinai prikeltas. Neveikia jau daugiau kaip dvejus metus.
 
 Neveikia:
 
