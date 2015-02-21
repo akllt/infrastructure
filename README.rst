@@ -23,7 +23,7 @@ Apache
    * - http://ideja.akl.lt
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
-     - NEAKTUALI: http://tinyurl.com/newgy5r
+     - BEPROBLEMŲ: http://tinyurl.com/newgy5r
    * - http://lietuvybe.org
      - Zope 2.12
      - ``/srv/zopes/akl-2.12``
