@@ -43,7 +43,7 @@ Apache
    * - http://pycon.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
-     - Kiek būtų sunku migruoti? Kiek šitoje svetainėje informacijos?
+     - Numigruotas į Pelican: https://bitbucket.org/sirex/pyconlt/
    * - http://plone.akl.lt
      - Zope 2.10
      - ``/srv/zopes/akl``
