@@ -30,11 +30,11 @@ Pakeitimų istoriją galima peržiūrėti https://ideja.akl.lt/changelog
 Svetainės
 ~~~~~~~~~
 
-``grep -E 'ServerName|ServerAlias' /etc/apache2/sites-enabled/*``
+``grep -E 'ServerName|ServerAlias' /etc/apache2/sites-enabled/* | column -t``
 
-============ ====================== ===================================
+============ ====================== =========================================
 Tipas        Svetainė               Pastabos
------------- ---------------------- -----------------------------------
+------------ ---------------------- -----------------------------------------
 ServerName   www.akl.lt             Zope (/srv/zopes/akl-2.12)
 ServerAlias  akl.lt_                ^
 ServerName   baltix.akl.lt_         Zope + Plone (/srv/zopes/baltix-2.13)
@@ -42,24 +42,16 @@ ServerAlias  baltix.lv              ^
 ServerAlias  www.baltix.lv          ^
 ServerAlias  baltix.lt              ^
 ServerAlias  www.baltix.lt          ^
-ServerName   debian.akl.lt_         **neveikia** [*]_
-ServerName   gnome.akl.lt_          **neveikia**
 ServerName   ideja.akl.lt_          pov-server-page_
-ServerName   lietuvybe.akl.lt       DNS rodo kitur, reiktų išjungti
-ServerAlias  lietuvybe.org          DNS rodo kitur, reiktų išjungti
-ServerAlias  www.lietuvybe.org      DNS rodo kitur, reiktų išjungti
 ServerName   lists.akl.lt_          Mailman_
-ServerName   mode.esu.as_           Zope, **neveikia** (/srv/zopes/mode)
-ServerName   mokslui.akl.lt         **neveikia**
-ServerAlias  mokslas.akl.lt_        ^
-ServerName   nariai.akl.lt_         **neveikia**
-ServerName   pycon.akl.lt_          **neveikia**
+ServerName   mode.esu.as_           Zope (/srv/zopes/mode), **neveikia** [*]_
+ServerName   nariai.akl.lt_         Zope (/srv/zopes/mode), **neveikia**
+ServerName   pycon.akl.lt_          redirect to pycon.lt
 ServerAlias  python.akl.lt          ^
-ServerName   planetdjango.org_      DNS rodo kitur, reiktų išjungti
-ServerAlias  www.planetdjango.org   DNS rodo kitur, reiktų išjungti
-ServerName   plone.akl.lt_          **neveikia**
-ServerName   wiki.akl.lt_           **neveikia**
-============ ====================== ===================================
+ServerName   plone.akl.lt_          Zope (/srv/zopes/akl-2.13), **neveikia**
+ServerName   vejas.akl.lt_          static (/srv/vejas/www/)
+ServerName   wiki.akl.lt_           Zope (/srv/zopes/akl-2.13), **neveikia**
+============ ====================== =========================================
 
 .. [*] Sugriuvo upgradinant Ubuntu 8.04 į 10.04, kai buvo išmesti
        zope2.9 ir zope2.10 paketai. Marius pataisys, jei sugebės.
@@ -97,6 +89,7 @@ Ubuntu 10.04 nebeturi nė vieno, tad visi jie neveikia::
 Vėliau buvo sukurti keli Zope instance'ai rankomis, naudojant zc.buildout::
 
   /srv/zopes/akl-2.12
+  /srv/zopes/akl-2.13
   /srv/zopes/baltix-2.13
 
 Zope instance prievadai (juos galima pamatyti https://ideja.akl.lt/ports)::
@@ -108,30 +101,26 @@ Zope instance prievadai (juos galima pamatyti https://ideja.akl.lt/ports)::
   /srv/zopes/akl-2.9/etc/zope.conf      8023
   /srv/zopes/baltix/etc/zope.conf       8023
   /srv/zopes/akl-2.12/etc/zope.conf     18020
-  /srv/zopes/baltix-2.13/etc/zope.conf  127.0.0.1:18023
+  /srv/zopes/akl-2.13/etc/zope.conf     18022
+  /srv/zopes/baltix-2.13/etc/zope.conf  18023
 
 Zope prievadai ir Zope versijos::
 
   18023  Zope 2.13  /srv/zopes/baltix-2.13/
+  18022  Zope 2.13  /srv/zopes/akl-2.13/
   18020  Zope 2.12  /srv/zopes/akl-2.12/
-   8020  Zope 2.10  /srv/zopes/akl-2.10/, /srv/zopes/akl/
-   8021  Zope 2.10  /srv/zopes/mode/
-   8023  Zope 2.9   /srv/zopes/akl-2.9/, /srv/zopes/baltix/
+   8020  Zope 2.10  /srv/zopes/akl-2.10/, /srv/zopes/akl/     NEVEIKIA
+   8021  Zope 2.10  /srv/zopes/mode/                          NEVEIKIA
+   8023  Zope 2.9   /srv/zopes/akl-2.9/, /srv/zopes/baltix/   NEVEIKIA
 
 Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
 
-  baltix.akl.lt/   18023   /etc/init.d/zope2.13
+  baltix.akl.lt/   18023   /etc/init.d/zope2.13-baltix
   akl.lt/          18020   /etc/init.d/zope2.12
-  debian.akl.lt/    8020   /etc/init.d/zope2.10   NEVEIKIA
-  gnome.akl.lt/     8020   /etc/init.d/zope2.10   NEVEIKIA
-  mokslui.akl.lt/   8020   /etc/init.d/zope2.10   NEVEIKIA
-  plone.akl.lt/     8020   /etc/init.d/zope2.10   NEVEIKIA
-  pycon.akl.lt/     8020   /etc/init.d/zope2.10   NEVEIKIA
-  wiki.akl.lt/      8020   /etc/init.d/zope2.10   NEVEIKIA
+  plone.akl.lt/    18022   /etc/init.d/zope2.13   NEVEIKIA
+  wiki.akl.lt/     18022   /etc/init.d/zope2.13   NEVEIKIA
   mode.esu.as/      8021   /etc/init.d/zope2.10   NEVEIKIA
   nariai.akl.lt/    8021   /etc/init.d/zope2.10   NEVEIKIA
-  akl.lt/akl-2.9    8023   /etc/init.d/zope2.9    NEVEIKIA
-  akl.lt/aklv2      8022   /etc/init.d/zope2.8    SENIAI NEVEIKIA
 
 
 dogma.akl.lt
@@ -227,14 +216,14 @@ reikalingumo galėtų pakomentuoti Jurgis.
 pycon.akl.lt
 ------------
 
-:Migravimas: Nereikalingas
+:Migravimas: Perkelti
 :Serveris: ideja.akl.lt_
-:Viduriai: Zope 2.10
-:Vieta serveryje: ``/srv/zopes/akl``
-:Kas prižiūri:
+:Viduriai: apache vhostas
+:Vieta serveryje: ``/etc/apache2/sites-available/pycon.akl.lt``
+:Kas prižiūri: Marius Gedminas
 
-Numigruotas į Pelican: https://bitbucket.org/sirex/pyconlt/, talpinamas POV
-serveriuose.
+Redirectina į http://pycon.lt, kuris yra su Pelican darytas statinis saitas
+(https://bitbucket.org/sirex/pyconlt/), talpinamas POV serveriuose.
 
 plone.akl.lt
 ------------
@@ -284,21 +273,21 @@ baltix.akl.lt
 
 :Migravimas: Perkelti
 :Serveris: ideja.akl.lt_
-:Viduriai: Zope 2.9
-:Vieta serveryje: ``/srv/zopes/baltix``
+:Viduriai: Zope 2.13
+:Vieta serveryje: ``/srv/zopes/baltix-2.13``
 :Kas prižiūri:
 
-Mantas galėtų pakomentuoti dėl šitos svetainės sudėtingumo ir ar galima ją
-atnaujinti.
+Mantas Kriaučiūnas galėtų pakomentuoti dėl šitos svetainės sudėtingumo ir ar
+galima ją atnaujinti.
 
-Naujoje akl.lt svetainėje, planuojame padaryti galimybę, ant tos pačios TVS
-prikabinti kelias skirtingas svetaines. Gal būt, baltix.akl.lt būtų geras
+Naujoje akl.lt svetainėje, planuojame padaryti galimybę ant tos pačios TVS
+prikabinti kelias skirtingas svetaines. Galbūt, baltix.akl.lt būtų geras
 kandidatas perkėlimui.
 
 planetdjango.org
 ----------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Serveris: ideja.akl.lt_
 :Viduriai: Statiniai failai.
 :Vieta serveryje: ``/home/adomas/planetdjango/html``
@@ -307,6 +296,8 @@ planetdjango.org
 Projektas 2014 m. užgesintas ir pakeistas dviem statiniais failais:
 http://tinyurl.com/n8ys6z2.
 
+DNSas rodo nebe į idėją, tad galima ignoruoti.
+
 vejas.akl.lt
 ------------
 
@@ -314,7 +305,7 @@ vejas.akl.lt
 :Serveris: ideja.akl.lt_
 :Viduriai: Statiniai failai.
 :Vieta serveryje: ``/srv/vejas/www/``
-:Kas prižiūri: Albertas Agėjavas
+:Kas prižiūri: Albertas Agėjevas
 
 lists.akl.lt
 ------------
