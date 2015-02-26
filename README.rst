@@ -48,7 +48,6 @@ ServerName   mode.esu.as_           Zope (/srv/zopes/mode), **neveikia** [*]_
 ServerName   nariai.akl.lt_         Zope (/srv/zopes/mode), **neveikia**
 ServerName   pycon.akl.lt_          redirect to pycon.lt
 ServerAlias  python.akl.lt          ^
-ServerName   plone.akl.lt_          Zope (/srv/zopes/akl-2.13), **neveikia**
 ServerName   vejas.akl.lt_          static (/srv/vejas/www/)
 ServerName   wiki.akl.lt_           Zope (/srv/zopes/akl-2.13), **neveikia**
 ============ ====================== =========================================
@@ -117,7 +116,6 @@ Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
 
   baltix.akl.lt/   18023   /etc/init.d/zope2.13-baltix
   akl.lt/          18020   /etc/init.d/zope2.12
-  plone.akl.lt/    18022   /etc/init.d/zope2.13   NEVEIKIA
   wiki.akl.lt/     18022   /etc/init.d/zope2.13   NEVEIKIA
   mode.esu.as/      8021   /etc/init.d/zope2.10   NEVEIKIA
   nariai.akl.lt/    8021   /etc/init.d/zope2.10   NEVEIKIA
@@ -235,6 +233,8 @@ plone.akl.lt
 :Kas prižiūri:
 
 Labai seniai neatnaujinta, ir panašu, kad vargiai beaktuali svetainė (?).
+Zope 2.10 instance'as net neturi Plone!  Matyt buvo nuspręsta šios svetainės
+nemigruoti iš senesnio Zope instance'o.
 
 wiki.akl.lt
 -----------
