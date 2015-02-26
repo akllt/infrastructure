@@ -114,7 +114,7 @@ Zope prievadai ir Zope versijos::
 
   18023  Zope 2.13  /srv/zopes/baltix-2.13/
   18020  Zope 2.12  /srv/zopes/akl-2.12/
-   8020  Zope 2.10  /srv/zopes/akl/
+   8020  Zope 2.10  /srv/zopes/akl-2.10/, /srv/zopes/akl/
    8021  Zope 2.10  /srv/zopes/mode/
    8023  Zope 2.9   /srv/zopes/akl-2.9/, /srv/zopes/baltix/
 
@@ -131,7 +131,7 @@ Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
   mode.esu.as/      8021   /etc/init.d/zope2.10   NEVEIKIA
   nariai.akl.lt/    8021   /etc/init.d/zope2.10   NEVEIKIA
   akl.lt/akl-2.9    8023   /etc/init.d/zope2.9    NEVEIKIA
-  akl.lt/aklv2      8022   /etc/init.d/zope2.8    NEVEIKIA
+  akl.lt/aklv2      8022   /etc/init.d/zope2.8    SENIAI NEVEIKIA
 
 
 dogma.akl.lt
