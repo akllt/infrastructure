@@ -1,0 +1,93 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+
+
+  vars:
+    home: /opt/atviriduomenys.lt
+    path: "{{ home }}/web"
+
+
+  tasks:
+
+  - fail: msg="Ansible version 1.9 or greater required."
+    when: ansible_version.full | version_compare('1.9', '<')
+
+  - name: update locale
+    locale_gen: name={{ item }} state=present
+    with_items:
+    - en_US.UTF-8
+    - lt_LT.UTF-8
+
+  - name: apt packages
+    apt: pkg={{ item }} state=latest
+    with_items:
+    - build-essential
+    - postgresql
+    - python-psycopg2
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - apache2
+    - libapache2-mod-wsgi-py3
+    - git
+
+  - name: create atviriduomenys user
+    user: name=atviriduomenys system=yes group=www-data home={{ home }}
+
+  - name: postgresql database
+    postgresql_db: >
+      name=atviriduomenys
+      encoding='UTF-8'
+      lc_collate='C.UTF-8'
+      lc_ctype='C.UTF-8'
+      template='template0'
+    sudo_user: postgres
+
+  - name: postgresql user
+    postgresql_user: db=atviriduomenys name=atviriduomenys priv=ALL
+    sudo_user: postgres
+
+  - name: clone repository
+    git: repo=https://github.com/sirex/atviriduomenys.lt dest={{ path }} force=yes
+    notify: reload apache
+    sudo_user: atviriduomenys
+
+  - name: install app dependencies
+    command: make ubuntu chdir={{ path }}
+
+  - name: init buildout
+    command: python3 scripts/genconfig.py config/env/production.cfg chdir={{ path }}
+    sudo_user: atviriduomenys
+
+  - name: build project
+    command: make chdir={{ path }}
+    sudo_user: atviriduomenys
+
+  - name: migrate database
+    command: bin/django migrate --noinput chdir={{ path }}
+    sudo_user: atviriduomenys
+
+  - name: collectstatic
+    command: bin/django collectstatic --noinput chdir={{ path }}
+    sudo_user: atviriduomenys
+
+  - name: set up apache virtual host
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
+    notify: reload apache
+
+  - name: create log dir
+    file: path=/var/log/apache2/atviriduomenys.lt state=directory
+
+  - name: start apache
+    service: name=apache2 state=started
+
+
+  handlers:
+
+  - name: reload source code
+    command: touch --no-create {{ path }}/bin/django.wsgi
+
+  - name: reload apache
+    service: name=apache2 state=reloaded
