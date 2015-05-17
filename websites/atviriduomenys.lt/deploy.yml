@@ -6,7 +6,11 @@
 
   vars:
     home: /opt/atviriduomenys.lt
-    path: "{{ home }}/web"
+    path: "{{ home }}/app"
+    env: production
+
+  vars_files:
+    - vars/{{ env }}.yml
 
 
   tasks:
@@ -19,6 +23,9 @@
     with_items:
     - en_US.UTF-8
     - lt_LT.UTF-8
+
+  - name: apt repositories
+    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
 
   - name: apt packages
     apt: pkg={{ item }} state=latest
@@ -58,7 +65,7 @@
     command: make ubuntu chdir={{ path }}
 
   - name: init buildout
-    command: python3 scripts/genconfig.py config/env/production.cfg chdir={{ path }}
+    command: python3 scripts/genconfig.py config/env/{{ env }}.cfg chdir={{ path }}
     sudo_user: atviriduomenys
 
   - name: build project

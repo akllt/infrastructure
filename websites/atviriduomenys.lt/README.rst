@@ -26,13 +26,9 @@ __ https://help.ubuntu.com/community/SSH/OpenSSH/Keys#Generating_RSA_Keys
 
 And try to deploy::
 
-    ansible-playbook -u vagrant -i 10.0.0.42, deploy.yml
+    ansible-playbook -u vagrant -i 10.0.0.42, -e env=vagrant deploy.yml
 
 Be patient, this last command may take long time to finish, up to 10 minutes.
-
-Next thing to test is import script::
-
-    ansible-playbook -u vagrant -i 10.0.0.42, import-data.yml
 
 If everything went well you should see working web page by visiting
 http://localhost:8080/ .
