@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import re
 import sys
 import shlex
 import subprocess
@@ -8,6 +9,7 @@ import unittest
 import argparse
 import shutil
 import tempfile
+import os.path
 
 
 def sh(cmd, context=None, render=False):
@@ -46,6 +48,9 @@ class Vagrant(object):
     def ssh(self, *args):
         subprocess.check_call(filter(None, ['ssh', '-F', self.config, self.host, quote(*args)]))
 
+    def ssh_output(self, *args):
+        return subprocess.check_output(filter(None, ['ssh', '-F', self.config, self.host, quote(*args)]))
+
     def push(self, src, dst):
         sh('tar --directory {path} -cf- {src} | ssh -F {config} {host} {cmd}', {
             'src': src.name,
@@ -56,10 +61,11 @@ class Vagrant(object):
         })
 
 
-def get_salt_call_version():
-    output = subprocess.check_output('salt-call', '--version')
-    _, version = output.strip().split()
-    return version
+def is_file_exists(paths):
+    for path in paths:
+        if os.path.exists(path):
+            return True
+    return False
 
 
 def bootstrap():
@@ -83,6 +89,15 @@ def main(argv=None):
 ###########
 #  Tests  #
 ###########
+
+# python3 -munittest runsalt.py
+
+
+class TestCaseMixin(object):
+
+    def assertRegex(self, regex, text):
+        text = text.decode('utf-8') if isinstance(text, bytes) else text
+        self.assertTrue(re.match(regex, text) is not None, '%r does not match %r' % (text, regex))
 
 
 class SshTests(unittest.TestCase):
@@ -116,5 +131,5 @@ class PushTests(unittest.TestCase):
 
 class CheckSaltTests(unittest.TestCase):
 
-    def test_get_salt_call_version(self):
-        pass
+    def test_file_exists(self):
+        self.assertTrue(is_file_exists(['/usr/bin/salt-call']))
