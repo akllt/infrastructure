@@ -57,7 +57,7 @@
     sudo_user: postgres
 
   - name: clone repository
-    git: repo=https://github.com/python-dirbtuves/vasaros-dirbtuves.git dest={{ path }} force=yes
+    git: repo=https://github.com/python-dirbtuves/website.git dest={{ path }} force=yes
     notify: reload apache
     sudo_user: pylab
 
