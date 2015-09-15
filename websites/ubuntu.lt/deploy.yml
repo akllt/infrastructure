@@ -1,0 +1,106 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+
+
+  vars:
+    name: ubuntu.lt
+    slug: ubuntult
+    home: /opt/{{ name }}
+    path: "{{ home }}/www"
+
+  tasks:
+
+  - name: update locale
+    locale_gen: name={{ item }} state=present
+    with_items:
+    - en_US.UTF-8
+    - lt_LT.UTF-8
+
+  - name: apt repositories
+    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
+
+  - name: apt packages
+    apt: pkg={{ item }} state=latest
+    with_items:
+    - php5
+    - apache2
+    - libapache2-mod-php5
+    - mysql-server
+    - php5-mysql
+    - python-mysqldb  # Required by Ansible
+
+  - name: create {{ slug }} user
+    user: name={{ slug }} system=yes group=www-data home={{ home }}
+
+  # Set up MySQL
+
+  - name: ensure mysql is running and starts on boot
+    service: name=mysql state=started enabled=true
+
+  - name: check /root/.my.cnf
+    stat: path=/root/.my.cnf
+    register: root_my_cnf
+
+  - name: mysql root user
+    mysql_user:
+      name=root
+      host=localhost
+      password={{ lookup('password', 'credentials/mysql_root_password') }}
+      state=present
+    when: not root_my_cnf.stat.exists
+
+  - template: src=templates/root_my.cnf dest=/root/.my.cnf owner=root mode=0600
+    when: not root_my_cnf.stat.exists
+
+  - name: ensure anonymous users are not in the database
+    mysql_user: name='' host=localhost state=absent
+
+  # MySQL database and user
+
+  - name: mysql database
+    mysql_db: >
+      name={{ slug }}
+      encoding=utf8
+      collation=utf8_general_ci
+  - name: check {{ home }}/.my.cnf
+    stat: path={{ home }}/.my.cnf
+    register: user_my_cnf
+
+  - name: mysql user
+    mysql_user: >
+      name={{ slug }}
+      host=localhost
+      password={{ lookup('password', 'credentials/mysql_user_password') }}
+      priv={{ slug }}.*:ALL,GRANT
+      state=present
+    when: not user_my_cnf.stat.exists
+
+  - template: src=templates/user_my.cnf dest={{ home }}/.my.cnf owner={{ slug }} mode=0600
+    when: not user_my_cnf.stat.exists
+    sudo_user: "{{ slug }}"
+
+  # Apache
+
+  - name: enabled mod_rewrite
+    apache2_module: name=rewrite state=present
+
+  - name: set up apache virtual host
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    notify: reload apache
+
+  - name: create log dir
+    file: path=/var/log/apache2/{{ name }} state=directory
+
+  - name: create app dir
+    file: path={{ path }} state=directory
+
+  - name: start apache
+    service: name=apache2 state=started
+
+
+  handlers:
+
+  - name: reload apache
+    service: name=apache2 state=reloaded
