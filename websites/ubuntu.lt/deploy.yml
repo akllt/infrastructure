@@ -83,8 +83,12 @@
 
   # Apache
 
-  - name: enabled mod_rewrite
-    apache2_module: name=rewrite state=present
+  - name: enabled apache modules
+    apache2_module: name={{ item }} state=present
+    with_items:
+    - rewrite
+    - ssl
+    notify: restart apache
 
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
@@ -96,11 +100,29 @@
   - name: create app dir
     file: path={{ path }} state=directory
 
+  - name: create app dir
+    file: path={{ home }}/certs state=directory
+
+  - name: upload certificate
+    copy:
+      src=credentials/certs/{{ item }}
+      dest={{ home }}/certs/{{ item }}
+      owner=www-data
+      group=www-data
+      mode=0400
+    with_items:
+    - ssl.crt
+    - ssl.key
+    - sub.class1.server.ca.pem
+
   - name: start apache
     service: name=apache2 state=started
 
 
   handlers:
+
+  - name: restart apache
+    service: name=apache2 state=restarted
 
   - name: reload apache
     service: name=apache2 state=reloaded
