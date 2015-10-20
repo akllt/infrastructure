@@ -87,6 +87,10 @@
   - name: create log dir
     file: path=/var/log/apache2/atviriduomenys.lt state=directory
 
+  - name: create data dir
+    file: path={{ path }}/var/www/data state=directory
+    sudo_user: atviriduomenys
+
   - name: start apache
     service: name=apache2 state=started
 
