@@ -8,6 +8,28 @@ AKL serverių ūkis
 Serveriai
 =========
 
+iv-4.pov.lt
+-----------
+
+:OS: Ubuntu 14.04.3 LTS
+:Kur: dedikuoti.lt virtualus serveris
+:Kas prižiūri: Marius Gedminas
+:Servisai: Python, PHP svetainės
+
+Pakeitimų istoriją galima peržiūrėti (tik administratoriams) https://iv-4.pov.lt/changelog
+
+Šį serverį AKL'ui padovanojo `Programuotojų artelė`_.
+
+.. _Programuotojų artelė: http://pov.lt/
+
+Svetainės:
+
+- ubuntu.lt_
+- pycon.lt_
+- atviriduomenys.lt_
+- pylab.lt_
+- manopozicija.lt_
+
 ideja.akl.lt
 ------------
 
@@ -165,6 +187,42 @@ akl.lt
 Migruojama ant naujausio Django/Wagtail ir Python 3:
 https://github.com/python-dirbtuves/akl.lt
 
+atviriduomenys.lt
+-----------------
+
+:Serveris: iv-4.pov.lt_
+:Adresas: atviriduomenys.lt
+:Naudojamas: taip
+:Viduriai: Django 1.8, Python 3, PostgreSQL
+:Vieta serveryje: ``/opt/atviriduomenys.lt``
+:Kas prižiūri: Mantas Zimnickas
+:Kodas: https://github.com/sirex/atviriduomenys.lt
+
+pylab.lt
+--------
+
+:Serveris: iv-4.pov.lt_
+:Adresas: pylab.lt
+:Naudojamas: ne
+:Viduriai: Django 1.8, Python 3, PostgreSQL
+:Vieta serveryje: ``/opt/pylab.lt``
+:Kas prižiūri: Mantas Zimnickas
+
+Šis projektas buvo vienas iš Python dirbtuvių projektų, skirtas vidiniam Python
+dirbtuvių naudojimui ir susitikimų organizacimui. Tačiau Python dirbtuvės nuo
+2015 metų rudenio nebevyksta ir šis projektas nuo to laiko nebenaudojamas.
+
+manopozicija.lt
+---------------
+
+:Serveris: iv-4.pov.lt_
+:Adresas: manopozicija.lt
+:Naudojamas: taip
+:Viduriai: Django 1.8, Python 3, PostgreSQL
+:Vieta serveryje: ``/opt/manopozicija.lt``
+:Kas prižiūri: Mantas Zimnickas
+:Kodas: https://github.com/sirex/manopozicija.lt
+
 lietuvybe.org
 -------------
 
@@ -215,6 +273,7 @@ pycon.akl.lt
 ------------
 
 :Migravimas: Perkelti
+:Naudojamas: taip
 :Serveris: ideja.akl.lt_
 :Viduriai: apache vhostas
 :Vieta serveryje: ``/etc/apache2/sites-available/pycon.akl.lt``
@@ -222,6 +281,18 @@ pycon.akl.lt
 
 Redirectina į http://pycon.lt, kuris yra su Pelican darytas statinis saitas
 (https://bitbucket.org/sirex/pyconlt/), talpinamas POV serveriuose.
+
+pycon.lt
+--------
+
+:Migravimas: Perkelti
+:Adresas: pycon.lt
+:Naudojamas: taip
+:Serveris: ideja.akl.lt_
+:Viduriai: Pelican
+:Vieta serveryje: ``/opt/pycon``
+:Kas prižiūri: Mantas Zimnickas
+:Kodas: https://bitbucket.org/sirex/pyconlt/
 
 plone.akl.lt
 ------------
@@ -410,12 +481,17 @@ stats.akl.lt
 ubuntu.lt
 ---------
 
-:Migravimas: Perkelti
-:Nuoroda: http://ubuntu.lt
-:Serveris: dogma.akl.lt_
-:Viduriai:
+:Nuoroda: https://ubuntu.lt
+:Naudojamas: taip
+:Serveris: iv-4.pov.lt_
+:Viduriai: phpBB, PHP, Apache, MySQL
 :Vieta serveryje:
-:Kas prižiūri:
+:Kas prižiūri: Mantas Zimnickas
+:Kodas: https://launchpad.net/~ubuntu-lt
+
+Yra planų migruoti serverį nuo PHPBB prie Misago: http://www.ubuntu.lt/forum/viewtopic.php?f=4&t=9544
+
+Naujai kuriamo varianto kodas: https://github.com/python-dirbtuves/ubuntu.lt
 
 webmail.akl.lt
 --------------
