@@ -29,6 +29,7 @@ Svetainės:
 - atviriduomenys.lt_
 - pylab.lt_
 - manopozicija.lt_
+- savanoriai.maistobankas.lt_
 
 ideja.akl.lt
 ------------
@@ -222,6 +223,17 @@ manopozicija.lt
 :Vieta serveryje: ``/opt/manopozicija.lt``
 :Kas prižiūri: Mantas Zimnickas
 :Kodas: https://github.com/sirex/manopozicija.lt
+
+savanoriai.maistobankas.lt
+--------------------------
+
+:Serveris: iv-4.pov.lt_
+:Adresas: savanoriai.maistobankas.lt
+:Naudojamas: taip
+:Viduriai: Django 1.9, Python 3, PostgreSQL
+:Vieta serveryje: ``/opt/savanoriai.maistobankas.lt``
+:Kas prižiūri: Mantas Zimnickas
+:Kodas: https://github.com/sirex/savanoriai
 
 lietuvybe.org
 -------------
