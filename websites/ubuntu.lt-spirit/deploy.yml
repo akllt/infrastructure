@@ -1,0 +1,111 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+
+
+  vars:
+    name: demo.ubuntu.lt
+    slug: ubuntult
+    home: /opt/ubuntu.lt
+    path: "{{ home }}/demo"
+
+  tasks:
+
+  - name: update locale
+    locale_gen: name={{ item }} state=present
+    with_items:
+    - en_US.UTF-8
+    - lt_LT.UTF-8
+
+  - name: apt repositories
+    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
+
+  - name: apt packages
+    apt: pkg={{ item }} state=latest
+    with_items:
+    - build-essential
+    - postgresql
+    - python-psycopg2
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - apache2
+    - libapache2-mod-wsgi-py3
+    - git
+
+  - name: apt build dependencies
+    apt: pkg={{ item }} state=build-dep
+    with_items:
+    - python-lxml
+    - python-imaging
+    - python-psycopg2
+
+  - name: create {{ slug }} user
+    user: name={{ slug }} system=yes group=www-data home={{ home }}
+
+  - name: postgresql database
+    postgresql_db: >
+      name={{ slug }}
+      encoding='UTF-8'
+      lc_collate='C.UTF-8'
+      lc_ctype='C.UTF-8'
+      template='template0'
+    sudo_user: postgres
+
+  - name: postgresql user
+    postgresql_user: db={{ slug }} name={{ slug }} priv=ALL
+    sudo_user: postgres
+
+  - name: clone repository
+    git: repo=https://github.com/sirex/ubuntu.lt dest={{ path }} force=yes
+    notify: reload apache
+    sudo_user: "{{ slug }}"
+
+  - name: create virtualenv
+    command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }}
+    sudo_user: "{{ slug }}"
+
+  - name: install project depencencies from requirements.txt
+    command: "{{ home }}/venv/bin/pip install -r requirements.txt chdir={{ path }}"
+    sudo_user: "{{ slug }}"
+
+  # Apache
+
+  - name: enabled apache modules
+    apache2_module: name={{ item }} state=present
+    with_items:
+    - rewrite
+    - ssl
+    notify: restart apache
+
+  - name: set up apache virtual host
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    notify: reload apache
+
+  - name: create log dir
+    file: path=/var/log/apache2/{{ name }} state=directory
+
+  - name: upload certificate
+    copy:
+      src=credentials/certs/{{ item }}
+      dest={{ home }}/certs/{{ item }}
+      owner=www-data
+      group=www-data
+      mode=0400
+    with_items:
+    - ssl.crt
+    - ssl.key
+    - sub.class1.server.ca.pem
+
+  - name: start apache
+    service: name=apache2 state=started
+
+
+  handlers:
+
+  - name: restart apache
+    service: name=apache2 state=restarted
+
+  - name: reload apache
+    service: name=apache2 state=reloaded
