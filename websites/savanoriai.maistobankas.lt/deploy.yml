@@ -92,13 +92,12 @@
     command: ../bin/django compilemessages -l lt chdir={{ path }}/savanoriai
     sudo_user: savanoriai
 
-  - name: Install letsencrypt
-    pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
 
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/savanoriai.maistobankas.lt.conf
     notify: reload apache
-    register: apacheconfig
 
   - name: create log dir
     file: path=/var/log/apache2/savanoriai.maistobankas.lt state=directory
@@ -110,9 +109,14 @@
   - name: start apache
     service: name=apache2 state=started
 
-  - name: reload apache
+  # Let's Encrypt
+
+  - name: Install letsencrypt
+    pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+
+  - name: reload apache for letsencrypt webroot auth
     service: name=apache2 state=reloaded
-    when: apacheconfig.changed
+    when: not letsencryptcert.stat.exists
 
   - name: Let's Encrypt!
     command: >
@@ -123,9 +127,18 @@
       --authenticator webroot
       --webroot-path {{ path }}/var/www
       certonly
-    args:
-      creates: "/etc/letsencrypt/live/{{ server_name }}"
+      creates=/etc/letsencrypt/live/{{ server_name }}
     notify: reload apache
+    register: letsencrypt
+
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
+    when: letsencrypt.changed
+
+  - name: apache config after letsencrypt
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    notify: reload apache
+    when: letsencrypt.changed
 
 
   handlers:
