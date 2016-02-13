@@ -8,6 +8,8 @@
     home: /opt/savanoriai.maistobankas.lt
     path: "{{ home }}/app"
     env: production
+    server_admin: sirexas@gmail.com
+    server_name: savanoriai.maistobankas.lt
 
   vars_files:
     - vars/{{ env }}.yml
@@ -39,6 +41,12 @@
     - apache2
     - libapache2-mod-wsgi-py3
     - git
+
+    # Lets encrypt
+    - libaugeas0
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
 
   - name: create savanoriai user
     user: name=savanoriai system=yes group=www-data home={{ home }}
@@ -84,9 +92,13 @@
     command: ../bin/django compilemessages -l lt chdir={{ path }}/savanoriai
     sudo_user: savanoriai
 
+  - name: Install letsencrypt
+    pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/savanoriai.maistobankas.lt.conf
     notify: reload apache
+    register: apacheconfig
 
   - name: create log dir
     file: path=/var/log/apache2/savanoriai.maistobankas.lt state=directory
@@ -97,6 +109,23 @@
 
   - name: start apache
     service: name=apache2 state=started
+
+  - name: reload apache
+    service: name=apache2 state=reloaded
+    when: apacheconfig.changed
+
+  - name: Let's Encrypt!
+    command: >
+      {{ path }}/letsencrypt/bin/letsencrypt
+      --agree-tos --text --non-interactive
+      --domain {{ server_name }}
+      --email {{ server_admin }}
+      --authenticator webroot
+      --webroot-path {{ path }}/var/www
+      certonly
+    args:
+      creates: "/etc/letsencrypt/live/{{ server_name }}"
+    notify: reload apache
 
 
   handlers:
