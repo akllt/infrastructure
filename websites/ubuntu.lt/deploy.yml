@@ -9,6 +9,8 @@
     slug: ubuntult
     home: /opt/{{ name }}
     path: "{{ home }}/www"
+    server_admin: sirexas@gmail.com
+    server_name: ubuntu.lt
 
   tasks:
 
@@ -30,6 +32,12 @@
     - mysql-server
     - php5-mysql
     - python-mysqldb  # Required by Ansible
+
+    # Lets encrypt
+    - libaugeas0
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
 
   - name: create {{ slug }} user
     user: name={{ slug }} system=yes group=www-data home={{ home }}
@@ -90,6 +98,9 @@
     - ssl
     notify: restart apache
 
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
+
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
     notify: reload apache
@@ -117,6 +128,39 @@
 
   - name: start apache
     service: name=apache2 state=started
+
+  # Let's Encrypt
+
+  - name: install letsencrypt
+    pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+
+  - name: reload apache for letsencrypt webroot auth
+    service: name=apache2 state=reloaded
+    when: not letsencryptcert.stat.exists
+      
+  - name: let's encrypt!
+    command: >
+      {{ path }}/letsencrypt/bin/letsencrypt
+      --agree-tos --text --non-interactive
+      --domain {{ server_name }}
+      --domain www.{{ server_name }}
+      --email {{ server_admin }}
+      --expand
+      --authenticator webroot
+      --webroot-path {{ path }}
+      certonly
+      creates=/etc/letsencrypt/live/{{ server_name }}
+    notify: reload apache
+    register: letsencrypt
+
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
+    when: letsencrypt.changed
+
+  - name: apache config after letsencrypt
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    notify: reload apache
+    when: letsencrypt.changed
 
 
   handlers:
