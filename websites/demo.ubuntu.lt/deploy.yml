@@ -8,7 +8,7 @@
     name: demo.ubuntu.lt
     slug: ubuntult
     home: /opt/ubuntu.lt
-    path: "{{ home }}/demo"
+    path: "{{ home }}/spirit"
     server_admin: sirexas@gmail.com
     server_name: demo.ubuntu.lt
 
@@ -91,11 +91,11 @@
     register: letsencryptcert
 
   - name: set up apache virtual host
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
     notify: reload apache
 
   - name: create log dir
-    file: path=/var/log/apache2/{{ name }} state=directory
+    file: path=/var/log/apache2/{{ server_name }} state=directory
 
   - name: start apache
     service: name=apache2 state=started
@@ -103,21 +103,20 @@
   # Let's Encrypt
 
   - name: install letsencrypt
-    pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
+    with_items:
+    - letsencrypt
+    - letsencrypt-apache
 
-  - name: reload apache for letsencrypt webroot auth
-    service: name=apache2 state=reloaded
-    when: not letsencryptcert.stat.exists
-      
   - name: let's encrypt!
     command: >
-      {{ path }}/letsencrypt/bin/letsencrypt
-      --agree-tos --text --non-interactive
-      --domain {{ server_name }}
-      --email {{ server_admin }}
-      --authenticator webroot
-      --webroot-path {{ path }}
-      certonly
+      /opt/letsencrypt/bin/letsencrypt certonly
+        --text
+        --agree-tos
+        --non-interactive
+        --domain {{ server_name }}
+        --email {{ server_admin }}
+        --authenticator apache
       creates=/etc/letsencrypt/live/{{ server_name }}
     notify: reload apache
     register: letsencrypt
@@ -127,7 +126,7 @@
     when: letsencrypt.changed
 
   - name: apache config after letsencrypt
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
     notify: reload apache
     when: letsencrypt.changed
 

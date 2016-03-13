@@ -8,9 +8,9 @@
     name: ubuntu.lt
     slug: ubuntult
     home: /opt/ubuntu.lt
-    path: "{{ home }}/spirit"
+    path: "{{ home }}/www"
     server_admin: sirexas@gmail.com
-    server_name: ubuntu.lt
+    server_name: legacy.ubuntu.lt
 
   tasks:
 
@@ -26,15 +26,12 @@
   - name: apt packages
     apt: pkg={{ item }} state=latest
     with_items:
-    - build-essential
-    - postgresql
-    - python-psycopg2
-    - python-dev
-    - python-pip
-    - python-virtualenv
+    - php5
     - apache2
-    - libapache2-mod-wsgi-py3
-    - git
+    - libapache2-mod-php5
+    - mysql-server
+    - php5-mysql
+    - python-mysqldb  # Required by Ansible
 
     # Lets encrypt
     - libaugeas0
@@ -42,40 +39,54 @@
     - libffi-dev
     - ca-certificates
 
-  - name: apt build dependencies
-    apt: pkg={{ item }} state=build-dep
-    with_items:
-    - python-lxml
-    - python-imaging
-    - python-psycopg2
-
   - name: create {{ slug }} user
     user: name={{ slug }} system=yes group=www-data home={{ home }}
 
-  - name: postgresql database
-    postgresql_db: >
+  # Set up MySQL
+
+  - name: ensure mysql is running and starts on boot
+    service: name=mysql state=started enabled=true
+
+  - name: check /root/.my.cnf
+    stat: path=/root/.my.cnf
+    register: root_my_cnf
+
+  - name: mysql root user
+    mysql_user:
+      name=root
+      host=localhost
+      password={{ lookup('password', 'credentials/mysql_root_password') }}
+      state=present
+    when: not root_my_cnf.stat.exists
+
+  - template: src=templates/root_my.cnf dest=/root/.my.cnf owner=root mode=0600
+    when: not root_my_cnf.stat.exists
+
+  - name: ensure anonymous users are not in the database
+    mysql_user: name='' host=localhost state=absent
+
+  # MySQL database and user
+
+  - name: mysql database
+    mysql_db: >
       name={{ slug }}
-      encoding='UTF-8'
-      lc_collate='C.UTF-8'
-      lc_ctype='C.UTF-8'
-      template='template0'
-    sudo_user: postgres
+      encoding=utf8
+      collation=utf8_general_ci
+  - name: check {{ home }}/.my.cnf
+    stat: path={{ home }}/.my.cnf
+    register: user_my_cnf
 
-  - name: postgresql user
-    postgresql_user: db={{ slug }} name={{ slug }} priv=ALL
-    sudo_user: postgres
+  - name: mysql user
+    mysql_user: >
+      name={{ slug }}
+      host=localhost
+      password={{ lookup('password', 'credentials/mysql_user_password') }}
+      priv={{ slug }}.*:ALL,GRANT
+      state=present
+    when: not user_my_cnf.stat.exists
 
-  - name: clone repository
-    git: repo=https://github.com/sirex/ubuntu.lt dest={{ path }} force=yes
-    notify: reload apache
-    sudo_user: "{{ slug }}"
-
-  - name: create virtualenv
-    command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }}
-    sudo_user: "{{ slug }}"
-
-  - name: install project depencencies from requirements.txt
-    command: "{{ home }}/venv/bin/pip install -r requirements.txt chdir={{ path }}"
+  - template: src=templates/user_my.cnf dest={{ home }}/.my.cnf owner={{ slug }} mode=0600
+    when: not user_my_cnf.stat.exists
     sudo_user: "{{ slug }}"
 
   # Apache
@@ -96,6 +107,24 @@
 
   - name: create log dir
     file: path=/var/log/apache2/{{ server_name }} state=directory
+
+  - name: create app dir
+    file: path={{ path }} state=directory
+
+  - name: create app dir
+    file: path={{ home }}/certs state=directory
+
+  - name: upload certificate
+    copy:
+      src=credentials/certs/{{ item }}
+      dest={{ home }}/certs/{{ item }}
+      owner=www-data
+      group=www-data
+      mode=0400
+    with_items:
+    - ssl.crt
+    - ssl.key
+    - sub.class1.server.ca.pem
 
   - name: start apache
     service: name=apache2 state=started
