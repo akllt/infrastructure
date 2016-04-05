@@ -114,7 +114,9 @@
         --text
         --agree-tos
         --non-interactive
+        --expand
         --domain {{ server_name }}
+        --domain www.{{ server_name }}
         --email {{ server_admin }}
         --authenticator apache
       creates=/etc/letsencrypt/live/{{ server_name }}
