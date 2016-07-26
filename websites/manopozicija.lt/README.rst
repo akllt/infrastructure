@@ -1,3 +1,17 @@
+How to use
+==========
+
+In order to do full deployment run this command::
+
+  ansible-playbook deploy.yml -K
+
+If you did just insignificant changes and want to do quick deploy run this
+command::
+
+  ansible-playbook deploy.yml -K --tags upload
+
+
+
 Testing deployment scripts
 ==========================
 

@@ -40,6 +40,12 @@
     - libapache2-mod-wsgi-py3
     - git
 
+    # Lets encrypt
+    - libaugeas0
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
+
   - name: create user
     user: name=manopozicija system=yes group=www-data home={{ home }}
 
@@ -60,6 +66,7 @@
     git: repo=https://github.com/sirex/manopozicija.lt.git dest={{ path }} force=yes
     notify: reload apache
     sudo_user: manopozicija
+    tags: upload
 
   - name: install app dependencies
     command: make ubuntu chdir={{ path }}
@@ -71,14 +78,29 @@
   - name: build project
     command: make chdir={{ path }}
     sudo_user: manopozicija
+    tags: upload
 
   - name: migrate database
     command: bin/django migrate --noinput chdir={{ path }}
-    sudo_user: manopozicija
+    sudo_user: postgres
+    tags: upload
 
   - name: collectstatic
     command: bin/django collectstatic --noinput chdir={{ path }}
     sudo_user: manopozicija
+    tags: upload
+
+  # Apache
+
+  - name: enabled apache modules
+    apache2_module: name={{ item }} state=present
+    with_items:
+    - rewrite
+    - ssl
+    notify: restart apache
+
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
 
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
@@ -89,6 +111,38 @@
 
   - name: start apache
     service: name=apache2 state=started
+
+  # Let's Encrypt
+
+  - name: install letsencrypt
+    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
+    with_items:
+    - letsencrypt
+    - letsencrypt-apache
+
+  - name: let's encrypt!
+    command: >
+      /opt/letsencrypt/bin/letsencrypt certonly
+        --text
+        --agree-tos
+        --non-interactive
+        --expand
+        --domain manopozicija.lt
+        --domain www.manopozicija.lt
+        --email sirexas@gmail.com
+        --authenticator apache
+      creates=/etc/letsencrypt/live/manopozicija.lt
+    notify: reload apache
+    register: letsencrypt
+
+  - stat: path=/etc/letsencrypt/live/manopozicija.lt
+    register: letsencryptcert
+    when: letsencrypt.changed
+
+  - name: apache config after letsencrypt
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
+    notify: reload apache
+    when: letsencrypt.changed
 
 
   handlers:
