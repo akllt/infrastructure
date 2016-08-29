@@ -147,30 +147,40 @@ Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
 dogma.akl.lt
 ------------
 
-:OS: Debian GNU/Linux 6.0
-:Kur: VU MIF kompiuterių laboratorija, antrame aukšte, Naugarduko g.
+:OS: Debian GNU/Linux 8.5
+:Kur: LMTA virtualus serveris
 :Kas prižiūri: Rimas Kudelis
-:Būklė:
+
+Ėmus gesti fizinio serverio diskams, duomenys iš jų perkelti į laikiną virtualią mašiną Lietuvos muzikos ir teatro akademijos serveryje. Tuo pačiu padarytas atnaujinimas. Dabar serveris laukia nuolatinių namų, tačiau joks pavojus trumpuoju laikotarpiu jam negresia.
 
 faktas.akl.lt
 -------------
 
-:OS:
+:OS: 
 :Kur: VU MIF kompiuterių laboratorija, antrame aukšte, Naugarduko g.
-:Kas prižiūri:
-:Būklė:
+:Kas prižiūri: niekas
+:Būklė: Neveikia nuo 2012 m.
 
-Serveryje turėjo „suktis“ tik HTTP ir FTP servisas. Serveris užgęso 2012 m.,
-vėliau buvo dalinai, bet tik dalinai prikeltas. Neveikia jau daugiau kaip
-dvejus metus.
+Serveryje turėjo „suktis“ tik HTTP ir FTP servisas. Serveris užgęso 2012 m., vėliau buvo dalinai, bet tik dalinai prikeltas. Neveikia jau daugiau kaip dvejus metus.
 
 diedas.soften.ktu.lt
 --------------------
 
 :OS:
 :Kur: KTU
-:Kas prižiūri:
-:Būklė:
+:Kas prižiūri: niekas
+:Būklė: apleistas, neprižiūrimas
+
+Iki 2016 m. šis serveris aptarnavo AKL el. paštą, tačiau jau mažiausiai keletą metų nebuvo prižiūrimas. 2016 m. rugpjūtį serveris tapo nepasiekiamas.
+
+mail.akl.lt
+-----------
+
+:OS: 
+:Kur: LMTA virtualus serveris
+:Kas prižiūri: Rimas Kudelis
+
+Sugedus diedas.soften.ktu.lt_ serveriui, AKL el. paštas perkeltas į LMTA virtualų serverį, kuriame veikia Rimo asmeninis el. paštas ir keletas interneto svetainių.
 
 Interneto svetainės
 ===================
@@ -406,9 +416,9 @@ autocorr.akl.lt
 :Migravimas: Perkelti
 :Nuoroda: http://autocorr.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
-:Kas prižiūri:
+:Viduriai: pavienis PHP skriptas
+:Vieta serveryje: ``/var/www/autocorr.akl.lt/``
+:Kas prižiūri: Rimas Kudelis
 
 forumai.akl.lt
 --------------
@@ -416,19 +426,21 @@ forumai.akl.lt
 :Migravimas: Perkelti
 :Nuoroda: http://forumai.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
+:Viduriai: `SMF <http://www.simplemachines.org/>`
+:Vieta serveryje: ``/var/www/forumai.akl.lt/``
 :Kas prižiūri:
 
 gimp.akl.lt
 -----------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://gimp.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
+:Viduriai: apache vhostas
 :Vieta serveryje:
 :Kas prižiūri:
+
+Redirectina į http://gimp.lt/ – Giedriaus Naudžiūno ir kompanijos prižiūrimą svetainę apie GIMP. Senoji svetainė, veikusi kaip akl.lt subdomenas, pašalinta su Giedriaus palaiminimu.
 
 kde.akl.lt
 ----------
@@ -436,9 +448,9 @@ kde.akl.lt
 :Migravimas: Perkelti
 :Nuoroda: http://kde.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
-:Kas prižiūri:
+:Viduriai: WordPress
+:Vieta serveryje: ``/home/dgvirtual/www/kde/``
+:Kas prižiūri: Donatas Glodenis
 
 lietuvybe.lt
 ------------
@@ -446,9 +458,9 @@ lietuvybe.lt
 :Migravimas: Perkelti
 :Nuoroda: http://lietuvybe.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
-:Kas prižiūri:
+:Viduriai: `CMS Made Simple <http://www.cmsmadesimple.org/>`
+:Vieta serveryje: ``/var/www/lietuvybe.kt/``
+:Kas prižiūri: Rimas Kudelis
 
 locost.lt
 ---------
@@ -456,9 +468,9 @@ locost.lt
 :Migravimas: Perkelti
 :Nuoroda: http://locost.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
-:Kas prižiūri:
+:Viduriai: `phpBB <https://www.phpbb.com/>`
+:Vieta serveryje: ``/home/locost/www/phpBB3/``
+:Kas prižiūri: Albertas Agejevas
 
 opensuse.lt
 -----------
@@ -466,9 +478,9 @@ opensuse.lt
 :Migravimas: Perkelti
 :Nuoroda: http://opensuse.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
-:Kas prižiūri:
+:Viduriai: `Joomla! <https://www.joomla.org/>`
+:Vieta serveryje: ``/home/opensuse/opensuse.lt/``
+:Kas prižiūri: Mindaugas Baranauskas
 
 planet.akl.lt
 -------------
@@ -476,18 +488,18 @@ planet.akl.lt
 :Migravimas: Perkelti
 :Nuoroda: http://planet.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
+:Viduriai: `Planet Venus <http://intertwingly.net/code/venus/>`
+:Vieta serveryje: ``/var/www/planet.akl.lt/``, ``/etc/planet`` ir kiti `planet-venus` paketo failai
 :Kas prižiūri:
 
 stats.akl.lt
 ------------
 
-:Migravimas: Perkelti
+:Migravimas: Perkelti?
 :Nuoroda: http://stats.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
+:Viduriai: `PhpMyVisites <http://www.phpmyvisites.us/>`
+:Vieta serveryje: ``/var/www/stats.akl.lt/``
 :Kas prižiūri:
 
 ubuntu.lt
@@ -528,22 +540,24 @@ atvirasalus.lt
 haiku-os.lt
 -----------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://haiku-os.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
+:Viduriai: statiniai HTML failai
+:Vieta serveryje: /var/www/haiku-os.lt/
 :Kas prižiūri:
+
+Svetainė nebereikalinga – už domeną nebemokama, o jokių vertingų duomenų joje nėra.
 
 
 blog.akl.lt
 -----------
 
-:Migravimas: Nereikalingas
+:Migravimas: Nereikalingas?
 :Nuoroda: http://blog.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
-:Vieta serveryje:
+:Viduriai: WordPress
+:Vieta serveryje: ``/var/www/blog.akl.lt``
 :Kas prižiūri:
 
 coder.akl.lt
