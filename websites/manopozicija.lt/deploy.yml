@@ -109,6 +109,13 @@
   - name: create log dir
     file: path=/var/log/apache2/manopozicija.lt state=directory
 
+  - name: set locale for Apache
+    lineinfile: dest=/etc/apache2/envvars regexp={{ item.regexp }} line={{ item.line}}
+    with_items:
+      # https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/#basic-configuration
+    - {regexp: "^export LANG", line: "export LANG='C.UTF-8'"}
+    - {regexp: "^export LC_ALL", line: "export LC_ALL='C.UTF-8'"}
+
   - name: start apache
     service: name=apache2 state=started
 
