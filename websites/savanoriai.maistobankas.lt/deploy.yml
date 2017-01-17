@@ -113,10 +113,11 @@
 
   - name: Install letsencrypt
     pip: virtualenv={{ path }}/letsencrypt name=letsencrypt
+    when: env == 'production'
 
   - name: reload apache for letsencrypt webroot auth
     service: name=apache2 state=reloaded
-    when: not letsencryptcert.stat.exists
+    when: env == 'production' and not letsencryptcert.stat.exists
 
   - name: Let's Encrypt!
     command: >
@@ -130,15 +131,16 @@
       creates=/etc/letsencrypt/live/{{ server_name }}
     notify: reload apache
     register: letsencrypt
+    when: env == 'production'
 
   - stat: path=/etc/letsencrypt/live/{{ server_name }}
     register: letsencryptcert
-    when: letsencrypt.changed
+    when: letsencrypt.changed and env == 'production'
 
   - name: apache config after letsencrypt
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ name }}.conf
     notify: reload apache
-    when: letsencrypt.changed
+    when: letsencrypt.changed and env == 'production'
 
 
   handlers:
