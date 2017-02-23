@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: yes
+  become: yes
   gather_facts: yes
 
 
@@ -20,6 +20,8 @@
     - en_US.UTF-8
     - lt_LT.UTF-8
 
+  # Packages
+
   - name: apt repositories
     apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
 
@@ -34,13 +36,8 @@
     - python-virtualenv
     - apache2
     - libapache2-mod-wsgi-py3
+    - gettext
     - git
-
-    # Lets encrypt
-    - libaugeas0
-    - libssl-dev
-    - libffi-dev
-    - ca-certificates
 
   - name: apt build dependencies
     apt: pkg={{ item }} state=build-dep
@@ -52,6 +49,8 @@
   - name: create {{ slug }} user
     user: name={{ slug }} system=yes group=www-data home={{ home }}
 
+  # Database
+
   - name: postgresql database
     postgresql_db: >
       name={{ slug }}
@@ -59,24 +58,43 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db={{ slug }} name={{ slug }} priv=ALL
-    sudo_user: postgres
+    become_user: postgres
+
+  # App
 
   - name: clone repository
     git: repo=https://github.com/sirex/ubuntu.lt dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: "{{ slug }}"
+    become_user: "{{ slug }}"
 
   - name: create virtualenv
-    command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }}
-    sudo_user: "{{ slug }}"
+    command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
+    become_user: "{{ slug }}"
 
   - name: install project depencencies from requirements.txt
     command: "{{ home }}/venv/bin/pip install -r requirements.txt chdir={{ path }}"
-    sudo_user: "{{ slug }}"
+    become_user: "{{ slug }}"
+
+  - name: update translation files
+    command: "{{ home }}/venv/bin/django-admin compilemessages -l lt chdir={{ path }}/ubuntult"
+    become_user: "{{ slug }}"
+
+  - name: run database migrations
+    command: "{{ home }}/venv/bin/python manage.py migrate chdir={{ path }}"
+    become_user: "{{ slug }}"
+
+  - name: collect static
+    command: "{{ home }}/venv/bin/python manage.py collectstatic --noinput chdir={{ path }}"
+    become_user: "{{ slug }}"
+
+  - name: rebuild search index
+    command: "{{ home }}/venv/bin/python manage.py rebuild_index --noinput chdir={{ path }}"
+    become_user: "{{ slug }}"
+    when: upgrade
 
   # Apache
 
@@ -102,13 +120,21 @@
 
   # Let's Encrypt
 
-  - name: install letsencrypt
+  - name: "let's encrypt: apt packages"
+    apt: pkg={{ item }} state=latest
+    with_items:
+    - libaugeas0
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
+
+  - name: "let's encrypt: pip packages"
     pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
     with_items:
     - letsencrypt
     - letsencrypt-apache
 
-  - name: let's encrypt!
+  - name: "let's encrypt!"
     command: >
       /opt/letsencrypt/bin/letsencrypt certonly
         --text
@@ -123,14 +149,21 @@
     notify: reload apache
     register: letsencrypt
 
-  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+  - name: "let's encrypt: watch changes"
+    stat: path=/etc/letsencrypt/live/{{ server_name }}
     register: letsencryptcert
     when: letsencrypt.changed
 
-  - name: apache config after letsencrypt
+  - name: "let's encrypt: apache config after letsencrypt"
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
     notify: reload apache
     when: letsencrypt.changed
+
+  # Backups
+
+  - name: cron for database backups
+    cron: name="db backup" minute="0" hour="5" job="pg_dump ubuntult | gzip -c > /opt/ubuntu.lt/ubuntu_lt.sql.gz"
+    become_user: "{{ slug }}"
 
 
   handlers:
