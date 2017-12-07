@@ -310,11 +310,11 @@ pycon.lt
 :Migravimas: Perkelti
 :Adresas: pycon.lt
 :Naudojamas: taip
-:Serveris: ideja.akl.lt_
-:Viduriai: Pelican
+:Serveris: iv-4.pov.lt
+:Viduriai: Django
 :Vieta serveryje: ``/opt/pycon``
-:Kas prižiūri: Mantas Zimnickas
-:Kodas: https://bitbucket.org/sirex/pyconlt/
+:Kas prižiūri: Karina Klinkevičiūtė, Mantas Zimnickas
+:Kodas: https://github.com/karina-klinkeviciute/pyconlt
 
 plone.akl.lt
 ------------

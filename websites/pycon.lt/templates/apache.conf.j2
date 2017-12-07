@@ -1,0 +1,58 @@
+<VirtualHost *:80>
+    ServerAdmin sirexas@gmail.com
+    ServerName pycon.lt
+    ServerAlias www.pycon.lt
+    Redirect / https://pycon.lt/
+    ErrorLog /var/log/apache2/pycon.lt/error.log
+    CustomLog /var/log/apache2/pycon.lt/access.log combined
+</VirtualHost>
+
+{% if letsencryptcert.stat.exists %}
+<VirtualHost *:443>
+    ServerAdmin pycon.lt
+    ServerName www.pycon.lt
+    Redirect / https://pycon.lt/
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/pycon.lt/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/pycon.lt/privkey.pem
+    SSLCertificateChainFile /etc/letsencrypt/live/pycon.lt/fullchain.pem
+
+    ErrorLog /var/log/apache2/pycon.lt/error.log
+    CustomLog /var/log/apache2/pycon.lt/access.log combined
+    CustomLog /var/log/apache2/pycon.lt/ssl.log "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerAdmin sirexas@gmail.com
+    ServerName pycon.lt
+
+    DocumentRoot {{ path }}/var/www
+
+    Alias /media/ {{ path }}/var/www/media/
+    Alias /static/ {{ path }}/var/www/static/
+
+    <Directory {{ path }}/var/www>
+        Require all granted
+    </Directory>
+
+    <Directory {{ path }}/pyconlt/>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess pycon python-home={{ home }}/env user=pycon group=www-data processes=1 threads=4 display-name=wsgi-pycon
+    WSGIProcessGroup pycon
+    WSGIScriptAlias / {{ path }}/pyconlt/wsgi.py
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/pycon.lt/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/pycon.lt/privkey.pem
+    SSLCertificateChainFile /etc/letsencrypt/live/pycon.lt/fullchain.pem
+
+    ErrorLog /var/log/apache2/pycon.lt/error.log
+    CustomLog /var/log/apache2/pycon.lt/access.log combined
+    CustomLog /var/log/apache2/pycon.lt/ssl.log "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+</VirtualHost>
+{% endif %}
