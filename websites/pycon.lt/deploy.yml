@@ -64,9 +64,9 @@
   - name: clone pycon.lt project from github repository
     become_user: pycon
     git:
-      repo: https://github.com/sirex/pyconlt.git
+      repo: https://github.com/karina-klinkeviciute/pyconlt.git
       dest: "{{ path }}"
-      version: deployment
+      version: master
       clone: no
       force: yes
     notify:
