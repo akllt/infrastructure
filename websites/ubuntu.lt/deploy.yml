@@ -24,7 +24,7 @@
   # Packages
 
   - name: apt repositories
-    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
+    apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
   - name: apt packages
     apt: pkg={{ item }} state=latest
