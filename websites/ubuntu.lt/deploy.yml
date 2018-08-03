@@ -73,7 +73,7 @@
     become_user: "{{ slug }}"
 
   - name: create virtualenv
-    command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
+    command: virtualenv --python=/usr/bin/python3 {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
     become_user: "{{ slug }}"
 
   - name: install project depencencies from requirements.txt
