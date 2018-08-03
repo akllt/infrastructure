@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  sudo: yes
   gather_facts: yes
 
 
@@ -15,9 +14,6 @@
 
   tasks:
 
-  - fail: msg="Ansible version 1.9 or greater required."
-    when: ansible_version.full | version_compare('1.9', '<')
-
   - name: update locale
     locale_gen: name={{ item }} state=present
     with_items:
@@ -25,7 +21,7 @@
     - lt_LT.UTF-8
 
   - name: apt repositories
-    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
+    apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
   - name: apt packages
     apt: pkg={{ item }} state=latest
@@ -50,35 +46,45 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db=atviriduomenys name=atviriduomenys priv=ALL
-    sudo_user: postgres
+    become_user: postgres
 
   - name: clone repository
-    git: repo=https://github.com/sirex/atviriduomenys.lt dest={{ path }} force=yes
+    git: repo=https://github.com/ivpk/metadata dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: atviriduomenys
+    become_user: atviriduomenys
 
-  - name: install app dependencies
-    command: make ubuntu chdir={{ path }}
+  - name: install python requirements to virtualenv
+    pip:
+      chdir: "{{ path }}"
+      virtualenv: env
+      virtualenv_python: python3
+      requirements: requirements.txt
+      state: present
+    become_user: atviriduomenys
+    tags: local
 
-  - name: init buildout
-    command: python3 scripts/genconfig.py config/env/{{ env }}.cfg chdir={{ path }}
-    sudo_user: atviriduomenys
-
-  - name: build project
-    command: make chdir={{ path }}
-    sudo_user: atviriduomenys
+  - name: install project into virtualenv
+    pip:
+      chdir: "{{ path }}"
+      virtualenv: env
+      virtualenv_python: python3
+      name: "."
+      editable: true
+      state: present
+    become_user: atviriduomenys
+    tags: local
 
   - name: migrate database
-    command: bin/django migrate --noinput chdir={{ path }}
-    sudo_user: atviriduomenys
+    command: env/bin/manage.py migrate --noinput chdir={{ path }}
+    become_user: atviriduomenys
 
   - name: collectstatic
-    command: bin/django collectstatic --noinput chdir={{ path }}
-    sudo_user: atviriduomenys
+    command: env/bin/manage.py collectstatic --noinput chdir={{ path }}
+    become_user: atviriduomenys
 
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
@@ -89,16 +95,13 @@
 
   - name: create data dir
     file: path={{ path }}/var/www/data state=directory
-    sudo_user: atviriduomenys
+    become_user: atviriduomenys
 
   - name: start apache
     service: name=apache2 state=started
 
 
   handlers:
-
-  - name: reload source code
-    command: touch --no-create {{ path }}/bin/django.wsgi
 
   - name: reload apache
     service: name=apache2 state=reloaded
