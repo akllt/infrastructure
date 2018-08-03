@@ -59,24 +59,29 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db={{ slug }} name={{ slug }} priv=ALL
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: clone repository
     git: repo=https://github.com/sirex/ubuntu.lt dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: "{{ slug }}"
+    become: yes
+    become_user: "{{ slug }}"
 
   - name: create virtualenv
     command: virtualenv --python=/usr/bin/python3.4 {{ home }}/venv chdir={{ path }}
-    sudo_user: "{{ slug }}"
+    become: yes
+    become_user: "{{ slug }}"
 
   - name: install project depencencies from requirements.txt
     command: "{{ home }}/venv/bin/pip install -r requirements.txt chdir={{ path }}"
-    sudo_user: "{{ slug }}"
+    become: yes
+    become_user: "{{ slug }}"
 
   # Apache
 

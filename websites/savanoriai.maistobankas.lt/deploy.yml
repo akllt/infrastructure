@@ -58,39 +58,47 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db=savanoriai name=savanoriai priv=ALL
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: clone repository
     git: repo=https://github.com/sirex/savanoriai dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: install app dependencies
     command: make ubuntu chdir={{ path }}
 
   - name: init buildout
     command: python3 scripts/genconfig.py config/env/{{ env }}.cfg chdir={{ path }}
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: build project
     command: make chdir={{ path }}
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: migrate database
     command: bin/django migrate --noinput chdir={{ path }}
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: collectstatic
     command: bin/django collectstatic --noinput chdir={{ path }}
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: compilemessages
     command: ../bin/django compilemessages -l lt chdir={{ path }}/savanoriai
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - stat: path=/etc/letsencrypt/live/{{ server_name }}
     register: letsencryptcert
@@ -104,7 +112,8 @@
 
   - name: create data dir
     file: path={{ path }}/var/www/data state=directory
-    sudo_user: savanoriai
+    become: yes
+    become_user: savanoriai
 
   - name: start apache
     service: name=apache2 state=started

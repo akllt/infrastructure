@@ -87,7 +87,8 @@
 
   - template: src=templates/user_my.cnf dest={{ home }}/.my.cnf owner={{ slug }} mode=0600
     when: not user_my_cnf.stat.exists
-    sudo_user: "{{ slug }}"
+    become: yes
+    become_user: "{{ slug }}"
 
   # Apache
 

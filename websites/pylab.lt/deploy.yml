@@ -50,35 +50,42 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db=pylab name=pylab priv=ALL
-    sudo_user: postgres
+    become: yes
+    become_user: postgres
 
   - name: clone repository
     git: repo=https://github.com/python-dirbtuves/website.git dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: pylab
+    become: yes
+    become_user: pylab
 
   - name: install app dependencies
     command: make ubuntu chdir={{ path }}
 
   - name: init buildout
     command: python3 scripts/genconfig.py config/env/{{ env }}.cfg chdir={{ path }}
-    sudo_user: pylab
+    become: yes
+    become_user: pylab
 
   - name: build project
     command: make chdir={{ path }}
-    sudo_user: pylab
+    become: yes
+    become_user: pylab
 
   - name: migrate database
     command: bin/django migrate --noinput chdir={{ path }}
-    sudo_user: pylab
+    become: yes
+    become_user: pylab
 
   - name: collectstatic
     command: bin/django collectstatic --noinput chdir={{ path }}
-    sudo_user: pylab
+    become: yes
+    become_user: pylab
 
   - name: set up apache virtual host
     template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/pylab.lt.conf
