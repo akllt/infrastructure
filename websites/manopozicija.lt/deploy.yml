@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: yes
+  become: yes
   gather_facts: yes
 
 
@@ -25,7 +25,7 @@
     - lt_LT.UTF-8
 
   - name: apt repositories
-    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ trusty main restricted universe' state=present
+    apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
   - name: apt packages
     apt: pkg={{ item }} state=latest
@@ -56,16 +56,16 @@
       lc_collate='C.UTF-8'
       lc_ctype='C.UTF-8'
       template='template0'
-    sudo_user: postgres
+    become_user: postgres
 
   - name: postgresql user
     postgresql_user: db=manopozicija name=manopozicija priv=ALL
-    sudo_user: postgres
+    become_user: postgres
 
   - name: clone repository
     git: repo=https://github.com/sirex/manopozicija.lt.git dest={{ path }} force=yes
     notify: reload apache
-    sudo_user: manopozicija
+    become_user: manopozicija
     tags: upload
 
   - name: install app dependencies
@@ -73,21 +73,21 @@
 
   - name: init buildout
     command: python3 scripts/genconfig.py config/env/{{ env }}.cfg chdir={{ path }}
-    sudo_user: manopozicija
+    become_user: manopozicija
 
   - name: build project
     command: make chdir={{ path }}
-    sudo_user: manopozicija
+    become_user: manopozicija
     tags: upload
 
   - name: migrate database
     command: bin/django migrate --noinput chdir={{ path }}
-    sudo_user: postgres
+    become_user: postgres
     tags: upload
 
   - name: collectstatic
     command: bin/django collectstatic --noinput chdir={{ path }}
-    sudo_user: manopozicija
+    become_user: manopozicija
     tags: upload
 
   # Apache
