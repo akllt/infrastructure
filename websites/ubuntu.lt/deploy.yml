@@ -11,6 +11,7 @@
     path: "{{ home }}/spirit"
     server_admin: sirexas@gmail.com
     server_name: ubuntu.lt
+    upgrade: false
 
   tasks:
 
