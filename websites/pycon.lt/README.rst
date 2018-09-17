@@ -1,11 +1,11 @@
+pycon.lt website has been moved to another server, but since email is managed
+by iv-4.pov.lt server, then iv-4.pov.lt still serves pycon.lt domain, just for
+email and redirects all HTTP requests to www.pycon.lt.
+
+
 How to use
 ==========
 
 In order to do full deployment run this command::
 
-  ansible-playbook deploy.yml --ask-vault-pass
-
-If you did just insignificant changes and want to do quick deploy run this
-command::
-
-  ansible-playbook deploy.yml --ask-vault-pass --tags upload
+  make deploy

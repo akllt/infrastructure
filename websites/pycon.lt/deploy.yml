@@ -1,121 +1,20 @@
 ---
 - hosts: all
+  become: yes
   gather_facts: yes
 
-
-  vars:
-    home: /opt/pycon.lt
-    path: "{{ home }}/app"
-
-  vars_files:
-    - secrets.yml
-
-
   tasks:
-
-  - name: update locale
-    locale_gen: name={{ item }} state=present
-    with_items:
-    - en_US.UTF-8
-    - lt_LT.UTF-8
-
-  - name: apt repositories
-    apt_repository: repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present
 
   - name: apt packages
     apt: pkg={{ item }} state=latest
     with_items:
-    - build-essential
-    - postgresql
-    - python3-psycopg2
-    - python3-dev
-    - python3-pip
-    - python-virtualenv
     - apache2
-    - libapache2-mod-wsgi-py3
-    - git
 
     # Lets encrypt
     - libaugeas0
     - libssl-dev
     - libffi-dev
     - ca-certificates
-
-  - name: create user
-    user: name=pycon system=yes group=www-data home={{ home }}
-
-  - name: postgresql database
-    become_user: postgres
-    postgresql_db:
-      name: pycon
-      encoding: UTF-8
-      lc_collate: C.UTF-8
-      lc_ctype: C.UTF-8
-      template: template0
-
-  - name: postgresql user
-    become_user: postgres
-    postgresql_user: db=pycon name=pycon priv=ALL
-
-  - name: set up django settings file
-    template: src=templates/settings.py dest={{ path }}/pyconlt/settings/local.py
-    notify: reload apache
-
-  - name: clone pycon.lt project from github repository
-    become_user: pycon
-    git:
-      repo: https://github.com/karina-klinkeviciute/pyconlt.git
-      dest: "{{ path }}"
-      version: master
-      clone: no
-      force: yes
-    notify:
-      - reload apache
-
-  - name: install pycon.lt dependencies
-    become_user: pycon
-    pip:
-      chdir: "{{ home }}"
-      virtualenv: "{{ home }}/env"
-      virtualenv_python: python3
-      requirements: "{{ home }}/app/requirements.txt"
-      state: present
-    tags: upload
-    notify:
-      - reload apache
-
-  - name: install pycon.lt project package
-    become_user: pycon
-    pip:
-      chdir: "{{ home }}"
-      virtualenv: "{{ home }}/env"
-      virtualenv_python: python3
-      name: "{{ home }}/app"
-      editable: true
-      state: present
-    tags: upload
-    notify:
-      - reload apache
-
-  - name: migrate database
-    become_user: pycon
-    command: "{{ home }}/env/bin/python manage.py migrate --settings=pyconlt.settings.local --noinput chdir={{ path }}"
-    tags: upload
-
-  - name: create static files directories
-    become_user: pycon
-    file:
-      path: "{{ item }}"
-      state: directory
-      mode: 0755
-    with_items:
-      - "{{ path }}/var/www/media"
-      - "{{ path }}/var/www/static"
-
-  - name: collectstatic
-    become_user: pycon
-    command: "{{ home }}/env/bin/python manage.py collectstatic --settings=pyconlt.settings.local --noinput chdir={{ path }}"
-    tags: upload
 
   # Apache
 
@@ -135,13 +34,6 @@
 
   - name: create log dir
     file: path=/var/log/apache2/pycon.lt state=directory
-
-  - name: set locale for Apache
-    lineinfile: dest=/etc/apache2/envvars regexp={{ item.regexp }} line={{ item.line}}
-    with_items:
-      # https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/#basic-configuration
-    - {regexp: "^export LANG", line: "export LANG='C.UTF-8'"}
-    - {regexp: "^export LC_ALL", line: "export LC_ALL='C.UTF-8'"}
 
   - name: start apache
     service: name=apache2 state=started
