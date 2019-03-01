@@ -1,0 +1,30 @@
+<VirtualHost *:80>
+  ServerName ad.sirex.lt
+  ServerAlias www.atviriduomenys.lt
+  Redirect permanent / https://atviriduomenys.lt/
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerAdmin sirexas@gmail.com
+  ServerName atviriduomenys.lt
+
+  DocumentRoot {{ home }}/www
+  Alias /data/ {{ home }}/www/data/
+
+  <Directory {{ home }}/www>
+      Require all granted
+      Options -Indexes
+  </Directory>
+
+  <Directory {{ home }}/www/data>
+      Options +Indexes
+      IndexOptions FancyIndexing FoldersFirst HTMLTable
+      ServerSignature Off
+  </Directory>
+
+  ProxyPass /data/ !
+  ProxyPass / http://localhost:8000/
+
+  ErrorLog /var/log/apache2/atviriduomenys.lt/error.log
+  CustomLog /var/log/apache2/atviriduomenys.lt/access.log combined
+</VirtualHost>

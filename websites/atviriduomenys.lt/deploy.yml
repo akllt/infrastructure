@@ -2,106 +2,140 @@
 - hosts: all
   gather_facts: yes
 
-
   vars:
     home: /opt/atviriduomenys.lt
-    path: "{{ home }}/app"
-    env: production
 
-  vars_files:
-    - vars/{{ env }}.yml
-
+  environment:
+    PYENV_ROOT: /opt/atviriduomenys.lt/pyenv
 
   tasks:
 
-  - name: update locale
-    locale_gen: name={{ item }} state=present
-    with_items:
-    - en_US.UTF-8
-    - lt_LT.UTF-8
+    - name: update locale
+      locale_gen: name={{ item }} state=present
+      with_items:
+      - en_US.UTF-8
+      - lt_LT.UTF-8
 
-  - name: apt repositories
-    apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
+    - name: apt repositories
+      apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
-  - name: apt packages
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - build-essential
-    - postgresql
-    - python-psycopg2
-    - python-dev
-    - python-pip
-    - python-virtualenv
-    - apache2
-    - libapache2-mod-wsgi-py3
-    - git
+    - name: apt packages
+      apt:
+        pkg:
+          - build-essential
+          - postgresql
+          - python-psycopg2
+          - python-dev
+          - python-pip
+          - python-virtualenv
+          - apache2
+          - git
+        state: latest
 
-  - name: create atviriduomenys user
-    user: name=atviriduomenys system=yes group=www-data home={{ home }}
+    - name: create atviriduomenys user
+      user: name=atviriduomenys system=yes group=www-data home={{ home }}
 
-  - name: postgresql database
-    postgresql_db: >
-      name=atviriduomenys
-      encoding='UTF-8'
-      lc_collate='C.UTF-8'
-      lc_ctype='C.UTF-8'
-      template='template0'
-    become_user: postgres
+    - name: postgresql database
+      postgresql_db: name=spinta encoding='UTF-8' lc_collate='C.UTF-8' lc_ctype='C.UTF-8' template='template0'
+      become_user: postgres
 
-  - name: postgresql user
-    postgresql_user: db=atviriduomenys name=atviriduomenys priv=ALL
-    become_user: postgres
+    - name: postgresql user
+      postgresql_user: db=spinta name=atviriduomenys priv=ALL
+      become_user: postgres
 
-  - name: clone repository
-    git: repo=https://github.com/ivpk/metadata dest={{ path }} force=yes
-    notify: reload apache
-    become_user: atviriduomenys
+    - name: git clone manifest
+      git: repo=https://github.com/atviriduomenys/manifest.git dest={{ home }}/manifest force=yes
+      notify: restart spinta
+      become_user: atviriduomenys
+      register: manifest
 
-  - name: install python requirements to virtualenv
-    pip:
-      chdir: "{{ path }}"
-      virtualenv: env
-      virtualenv_python: python3
-      requirements: requirements.txt
-      state: present
-    become_user: atviriduomenys
-    tags: local
+    - name: git clone spinta
+      git: repo=https://github.com/atviriduomenys/spinta.git dest={{ home }}/spinta force=yes
+      notify: restart spinta
+      become_user: atviriduomenys
+      register: spinta
 
-  - name: install project into virtualenv
-    pip:
-      chdir: "{{ path }}"
-      virtualenv: env
-      virtualenv_python: python3
-      name: "."
-      editable: true
-      state: present
-    become_user: atviriduomenys
-    tags: local
+    - name: git clone pyenv
+      git: repo=https://github.com/pyenv/pyenv.git dest={{ home }}/pyenv update=no
+      become_user: atviriduomenys
+      register: pyenv
 
-  - name: migrate database
-    command: env/bin/manage.py migrate --noinput chdir={{ path }}
-    become_user: atviriduomenys
+    - name: install python 3.7.2
+      command: "{{ home }} pyenv/bin/pyenv install 3.7.2 creates={{ home }}/pyenv/versions/3.7.2/bin/python"
+      when: pyenv.changed
 
-  - name: collectstatic
-    command: env/bin/manage.py collectstatic --noinput chdir={{ path }}
-    become_user: atviriduomenys
+    - name: install requirements
+      pip:
+        chdir: "{{ home }}"
+        virtualenv: env
+        virtualenv_python: pyenv/versions/3.7.2/bin/python
+        requirements: spinta/requirements.txt
+        state: present
+      become_user: atviriduomenys
+      when: spinta.changed
 
-  - name: set up apache virtual host
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
-    notify: reload apache
+    - name: install spinta
+      pip:
+        chdir: "{{ home }}"
+        virtualenv: env
+        virtualenv_python: pyenv/versions/3.7.2/bin/python
+        name: "{{ home }}/spinta"
+        editable: true
+        state: present
+      become_user: atviriduomenys
+      when: spinta.changed
 
-  - name: create log dir
-    file: path=/var/log/apache2/atviriduomenys.lt state=directory
+    - name: spinta config file
+      template: src=templates/env.j2 dest={{ home }}/.env
+      notify: restart spinta
 
-  - name: create data dir
-    file: path={{ path }}/var/www/data state=directory
-    become_user: atviriduomenys
+    - name: migrate database
+      command: env/bin/spinta migrate chdir={{ home }}
+      become_user: atviriduomenys
+      when: manifest.changed
 
-  - name: start apache
-    service: name=apache2 state=started
+    - name: spinta systemd service
+      template: src=templates/spinta.service.j2 dest=/etc/systemd/system/spinta.service
+      notify:
+        - reload systemd 
+        - restart spinta
 
+    - name: spinta systemd socket
+      template: src=templates/spinta.socket.j2 dest=/etc/systemd/system/spinta.socket
+      notify:
+        - reload systemd 
+        - restart spinta
+
+    - name: spinta systemd tmpfile
+      template: src=templates/spinta.tmpfile.j2 dest=/usr/lib/tmpfiles.d/spinta.conf
+      notify:
+        - reload systemd 
+        - restart spinta
+     
+    - name: apache config file
+      template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
+      notify: reload apache
+
+    - name: create log dir
+      file: path=/var/log/apache2/atviriduomenys.lt state=directory
+
+    - name: create data dir
+      file: path={{ home }}/www/data state=directory
+      become_user: atviriduomenys
+
+    - name: start spinta
+      service: name=apache2 state=started
+
+    - name: start apache
+      service: name=apache2 state=started
 
   handlers:
 
-  - name: reload apache
-    service: name=apache2 state=reloaded
+    - name: reload systemd
+      systemd: daemon_reload=yes
+
+    - name: reload apache
+      service: name=apache2 state=reloaded
+
+    - name: restart spinta
+      service: name=apache2 state=reloaded

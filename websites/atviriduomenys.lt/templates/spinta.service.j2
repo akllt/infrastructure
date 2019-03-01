@@ -1,0 +1,17 @@
+[Unit]
+Description=spinta daemon
+Requires=spinta.socket
+After=network.target
+
+[Service]
+PIDFile=/run/spinta/pid
+User=atviriduomenys
+Group=www-data
+WorkingDirectory={{ home }}
+ExecStart={{ home }}/env/bin/gunicorn --pid /run/spinta/pid -w 4 -k uvicorn.workers.UvicornWorker spinta.asgi:app
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

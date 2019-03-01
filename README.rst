@@ -204,10 +204,10 @@ atviriduomenys.lt
 :Serveris: iv-4.pov.lt_
 :Adresas: atviriduomenys.lt
 :Naudojamas: taip
-:Viduriai: Django 1.8, Python 3, PostgreSQL
+:Viduriai: Starlette, Python 3.7, PostgreSQL
 :Vieta serveryje: ``/opt/atviriduomenys.lt``
 :Kas prižiūri: Mantas Zimnickas
-:Kodas: https://github.com/sirex/atviriduomenys.lt
+:Kodas: https://github.com/atviriduomenys/spinta
 
 pylab.lt
 --------
