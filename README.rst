@@ -204,10 +204,13 @@ atviriduomenys.lt
 :Serveris: iv-4.pov.lt_
 :Adresas: atviriduomenys.lt
 :Naudojamas: taip
-:Viduriai: Starlette, Python 3.7, PostgreSQL
+:Viduriai: Starlette_, Gunicorn_, Python 3.7, PostgreSQL
 :Vieta serveryje: ``/opt/atviriduomenys.lt``
 :Kas prižiūri: Mantas Zimnickas
 :Kodas: https://github.com/atviriduomenys/spinta
+
+.. _Starlette: https://www.starlette.io/
+.. _Gunicorn: https://gunicorn.org/
 
 pylab.lt
 --------
