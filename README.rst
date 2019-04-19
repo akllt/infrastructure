@@ -193,10 +193,13 @@ akl.lt
 :Naudojamas: taip
 :Viduriai: Zope 2.12
 :Vieta serveryje: ``/srv/zopes/akl-2.12``
-:Kas prižiūri:
+:Kas prižiūri: Mantas Kriaučiūnas
 
 Migruojama ant naujausio Django/Wagtail ir Python 3:
 https://github.com/python-dirbtuves/akl.lt
+
+Serveris anksčiau fiziškai gulėjo VU MIF, bet vėliau buvo perduotas Manui
+Kriaučiūnui.
 
 atviriduomenys.lt
 -----------------
