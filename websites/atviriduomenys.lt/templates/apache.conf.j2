@@ -1,10 +1,23 @@
 <VirtualHost *:80>
-  ServerName ad.sirex.lt
+  ServerAdmin sirexas@gmail.com
+  ServerName atviriduomenys.lt
   ServerAlias www.atviriduomenys.lt
-  Redirect permanent / https://atviriduomenys.lt/
+  Redirect / https://atviriduomenys.lt/
 </VirtualHost>
 
-<VirtualHost *:80>
+{% if letsencryptcert.stat.exists %}
+<VirtualHost *:443>
+  ServerAdmin sirexas@gmail.com
+  ServerName www.atviriduomenys.lt
+  Redirect / https://atviriduomenys.lt/
+
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/atviriduomenys.lt/cert.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/atviriduomenys.lt/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/atviriduomenys.lt/fullchain.pem
+</VirtualHost>
+
+<VirtualHost *:443>
   ServerAdmin sirexas@gmail.com
   ServerName atviriduomenys.lt
 
@@ -25,6 +38,12 @@
   ProxyPass /data/ !
   ProxyPass / http://localhost:8000/
 
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/atviriduomenys.lt/cert.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/atviriduomenys.lt/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/atviriduomenys.lt/fullchain.pem
+
   ErrorLog /var/log/apache2/atviriduomenys.lt/error.log
   CustomLog /var/log/apache2/atviriduomenys.lt/access.log combined
 </VirtualHost>
+{% endif %}

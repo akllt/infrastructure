@@ -4,6 +4,7 @@ Requires=spinta.socket
 After=network.target
 
 [Service]
+Environment="AUTHLIB_INSECURE_TRANSPORT=1"
 PIDFile=/run/spinta/pid
 User=atviriduomenys
 Group=www-data

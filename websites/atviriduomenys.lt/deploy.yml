@@ -36,7 +36,7 @@
       user: name=atviriduomenys system=yes group=www-data home={{ home }}
 
     - name: postgresql database
-      postgresql_db: name=spinta encoding='UTF-8' lc_collate='C.UTF-8' lc_ctype='C.UTF-8' template='template0'
+      postgresql_db: name=atviriduomenys encoding='UTF-8' lc_collate='C.UTF-8' lc_ctype='C.UTF-8' template='template0'
       become_user: postgres
 
     - name: postgresql user
@@ -44,13 +44,13 @@
       become_user: postgres
 
     - name: git clone manifest
-      git: repo=https://github.com/atviriduomenys/manifest.git dest={{ home }}/manifest force=yes
+      git: repo=https://gitlab.com/atviriduomenys/manifest.git dest={{ home }}/manifest force=yes
       notify: restart spinta
       become_user: atviriduomenys
       register: manifest
 
     - name: git clone spinta
-      git: repo=https://github.com/atviriduomenys/spinta.git dest={{ home }}/spinta force=yes
+      git: repo=https://gitlab.com/atviriduomenys/spinta.git dest={{ home }}/spinta force=yes
       notify: restart spinta
       become_user: atviriduomenys
       register: spinta
@@ -85,6 +85,17 @@
       become_user: atviriduomenys
       when: spinta.changed
 
+    - name: install manifest
+      pip:
+        chdir: "{{ home }}"
+        virtualenv: env
+        virtualenv_python: pyenv/versions/3.7.2/bin/python
+        name: "{{ home }}/manifest"
+        editable: true
+        state: present
+      become_user: atviriduomenys
+      when: manifest.changed
+
     - name: spinta config file
       template: src=templates/env.j2 dest={{ home }}/.env
       notify: restart spinta
@@ -111,6 +122,9 @@
       notify:
         - reload systemd 
         - restart spinta
+
+    - stat: path=/etc/letsencrypt/live/atviriduomenys.lt
+      register: letsencryptcert
      
     - name: apache config file
       template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
@@ -128,6 +142,50 @@
 
     - name: start apache
       service: name=apache2 state=started
+
+    # Let's Encrypt
+
+    - name: "let's encrypt: apt packages"
+      apt:
+        pkg:
+          - libaugeas0
+          - libssl-dev
+          - libffi-dev
+          - ca-certificates
+        state: latest
+
+    - name: "let's encrypt: pip packages"
+      pip:
+        name:
+          - letsencrypt
+          - letsencrypt-apache
+        state: latest
+        virtualenv: /opt/letsencrypt
+
+    - name: "let's encrypt!"
+      command: >
+        /opt/letsencrypt/bin/letsencrypt certonly
+          --text
+          --agree-tos
+          --non-interactive
+          --expand
+          --domain atviriduomenys.lt
+          --domain www.atviriduomenys.lt
+          --email sirexas@gmail.com
+          --authenticator apache
+        creates=/etc/letsencrypt/live/atviriduomenys.lt
+      notify: reload apache
+      register: letsencrypt
+
+    - name: "let's encrypt: watch changes"
+      stat: path=/etc/letsencrypt/live/atviriduomenys.lt
+      register: letsencryptcert
+      when: letsencrypt.changed
+
+    - name: "let's encrypt: apache config after letsencrypt"
+      template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-enabled/atviriduomenys.lt.conf
+      notify: reload apache
+      when: letsencrypt.changed
 
   handlers:
 
