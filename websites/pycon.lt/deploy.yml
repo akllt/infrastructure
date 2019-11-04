@@ -6,15 +6,16 @@
   tasks:
 
   - name: apt packages
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - apache2
+    apt: pkg={{ items }} state=latest
+    vars:
+      items:
+      - apache2
 
-    # Lets encrypt
-    - libaugeas0
-    - libssl-dev
-    - libffi-dev
-    - ca-certificates
+      # Let's encrypt
+      - libaugeas0
+      - libssl-dev
+      - libffi-dev
+      - ca-certificates
 
   # Apache
 
@@ -41,14 +42,21 @@
   # Let's Encrypt
 
   - name: install letsencrypt
-    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
-    with_items:
-    - letsencrypt
-    - letsencrypt-apache
+    pip:
+      name: "{{ items }}"
+      virtualenv: /opt/letsencrypt
+      # the pip module doesn't know how to check for available updates in check
+      # mode, so it always returns a useless "changed" result, so let's make it
+      # not do that by using state=present for --check runs
+      state: "{{ 'present' if ansible_check_mode else 'latest'}}"
+    vars:
+      items:
+      - certbot
+      - certbot-apache
 
   - name: let's encrypt!
     command: >
-      /opt/letsencrypt/bin/letsencrypt certonly
+      /opt/letsencrypt/bin/certbot certonly
         --text
         --agree-tos
         --non-interactive
@@ -72,9 +80,6 @@
 
 
   handlers:
-
-  - name: reload source code
-    command: touch --no-create {{ path }}/bin/django.wsgi
 
   - name: reload apache
     service: name=apache2 state=reloaded
