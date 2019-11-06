@@ -196,4 +196,4 @@
       service: name=apache2 state=reloaded
 
     - name: restart spinta
-      service: name=apache2 state=reloaded
+      service: name=apache2 state=restarted
