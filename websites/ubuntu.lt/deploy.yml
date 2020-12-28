@@ -69,11 +69,19 @@
 
   - name: clone repository
     git: repo=https://github.com/sirex/ubuntu.lt dest={{ path }} force=yes
-    notify: reload apache
+    notify: restart gunicorn
     become_user: "{{ slug }}"
 
+  # TODO: How to install pyven (https://github.com/pyenv/pyenv)?
+  #
+  #       git clone https://github.com/pyenv/pyenv.git /opt/pyenv
+  #       export PYENV_ROOT=/opt/pyenv
+  #       export PATH=$PYENV_ROOT/bin:$PATH
+  #       pyenv install 3.8.2
+  - name: install pyenv
+
   - name: create virtualenv
-    command: virtualenv --python=/usr/bin/python3 {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
+    command: virtualenv --python=/opt/pyenv/versions/3.8.5/bin/python {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
     become_user: "{{ slug }}"
 
   - name: install project depencencies from requirements.txt
@@ -104,6 +112,8 @@
     with_items:
     - rewrite
     - ssl
+    - proxy
+    - proxy_http
     notify: restart apache
 
   - stat: path=/etc/letsencrypt/live/{{ server_name }}

@@ -1,0 +1,10 @@
+[Unit]
+Description=ubuntu.lt gunicorn socket
+
+[Socket]
+SocketUser={{ slug }}
+ListenStream=/run/{{ slug }}/socket
+ListenStream=127.0.0.1:8120
+
+[Install]
+WantedBy=sockets.target
