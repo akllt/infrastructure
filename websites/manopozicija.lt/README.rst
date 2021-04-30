@@ -21,7 +21,7 @@ instructions bellow helps you to do that.
 Install vagrant, virtualbox and ansible::
 
     sudo apt install vagrant virtualbox python-pip
-    sudo pip install 'ansible>=1.6'
+    sudo pip install ansible
 
 For the vagrant, you will probably need to download it from vagrant.com_,
 because at least 1.6 version is required.
