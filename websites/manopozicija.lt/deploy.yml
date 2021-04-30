@@ -10,13 +10,13 @@
     env: production
 
   vars_files:
-    - vars/{{ env }}.yml
+  - vars/{{ env }}.yml
 
 
   tasks:
 
-  - fail: msg="Ansible version 1.9 or greater required."
-    when: ansible_version.full | version_compare('1.9', '<')
+  - fail: msg="Ansible version 2.5 or greater required."
+    when: ansible_version.full is version('2.5', '<')
 
   - name: update locale
     locale_gen: name={{ item }} state=present
@@ -28,23 +28,22 @@
     apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
   - name: apt packages
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - build-essential
-    - postgresql
-    - python-psycopg2
-    - python-dev
-    - python-pip
-    - python-virtualenv
-    - apache2
-    - libapache2-mod-wsgi-py3
-    - git
+    apt:
+      name:
+      - build-essential
+      - postgresql
+      - python3-psycopg2
+      - python3-dev
+      - virtualenv
+      - apache2
+      - libapache2-mod-wsgi-py3
+      - git
 
-    # Lets encrypt
-    - libaugeas0
-    - libssl-dev
-    - libffi-dev
-    - ca-certificates
+      # Lets encrypt
+      - libaugeas0
+      - libssl-dev
+      - libffi-dev
+      - ca-certificates
 
   - name: create user
     user: name=manopozicija system=yes group=www-data home={{ home }}
@@ -103,7 +102,11 @@
     register: letsencryptcert
 
   - name: set up apache virtual host
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/manopozicija.lt.conf
+    notify: reload apache
+
+  - name: enable apache site
+    file: src=../sites-available/manopozicija.lt.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf state=link
     notify: reload apache
 
   - name: create log dir
@@ -124,8 +127,8 @@
   - name: install letsencrypt
     pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
     with_items:
-    - letsencrypt
-    - letsencrypt-apache
+    - certbot
+    - certbot-apache
 
   - name: let's encrypt!
     command: >
@@ -147,7 +150,7 @@
     when: letsencrypt.changed
 
   - name: apache config after letsencrypt
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/manopozicija.lt.conf
     notify: reload apache
     when: letsencrypt.changed
 
@@ -159,3 +162,6 @@
 
   - name: reload apache
     service: name=apache2 state=reloaded
+
+  - name: restart apache
+    service: name=apache2 state=restarted
