@@ -5,7 +5,6 @@
 
 
   vars:
-    name: ubuntu.lt
     slug: ubuntult
     home: /opt/ubuntu.lt
     path: "{{ home }}/spirit"
@@ -27,25 +26,25 @@
     apt_repository: "repo='deb-src http://ubuntu-archive.mirror.serveriai.lt/ {{ ansible_distribution_release }} main restricted universe' state=present"
 
   - name: apt packages
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - build-essential
-    - postgresql
-    - python-psycopg2
-    - python-dev
-    - python-pip
-    - python-virtualenv
-    - apache2
-    - libapache2-mod-wsgi-py3
-    - gettext
-    - git
+    apt:
+      name:
+      - build-essential
+      - postgresql
+      - python3-psycopg2
+      - python3-dev
+      - virtualenv
+      - apache2
+      - libapache2-mod-wsgi-py3
+      - gettext
+      - git
 
   - name: apt build dependencies
-    apt: pkg={{ item }} state=build-dep
-    with_items:
-    - python-lxml
-    - python-imaging
-    - python-psycopg2
+    apt:
+      state: build-dep
+      name:
+      - python3-lxml
+      - python3-imaging
+      - python3-psycopg2
 
   - name: create {{ slug }} user
     user: name={{ slug }} system=yes group=www-data home={{ home }}
@@ -72,19 +71,13 @@
     notify: restart gunicorn
     become_user: "{{ slug }}"
 
-  # TODO: How to install pyven (https://github.com/pyenv/pyenv)?
-  #
-  #       git clone https://github.com/pyenv/pyenv.git /opt/pyenv
-  #       export PYENV_ROOT=/opt/pyenv
-  #       export PATH=$PYENV_ROOT/bin:$PATH
-  #       pyenv install 3.8.2
-  - name: install pyenv
+  # TODO: maybe set up deadsnakes PPA if python3.8 is not available on the server
 
   - name: create virtualenv
-    command: virtualenv --python=/opt/pyenv/versions/3.8.5/bin/python {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
+    command: virtualenv --python=python3 {{ home }}/venv chdir={{ path }} creates={{ home }}/venv/bin/python
     become_user: "{{ slug }}"
 
-  - name: install project depencencies from requirements.txt
+  - name: install project dependencies from requirements.txt
     command: "{{ home }}/venv/bin/pip install -r requirements.txt chdir={{ path }}"
     become_user: "{{ slug }}"
 
@@ -120,7 +113,11 @@
     register: letsencryptcert
 
   - name: set up apache virtual host
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/{{ server_name }}.conf
+    notify: reload apache
+
+  - name: enable apache site
+    file: src=../sites-available/{{ server_name }}.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf state=link
     notify: reload apache
 
   - name: create log dir
@@ -132,18 +129,18 @@
   # Let's Encrypt
 
   - name: "let's encrypt: apt packages"
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - libaugeas0
-    - libssl-dev
-    - libffi-dev
-    - ca-certificates
+    apt:
+      name:
+      - libaugeas0
+      - libssl-dev
+      - libffi-dev
+      - ca-certificates
 
   - name: "let's encrypt: pip packages"
     pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
     with_items:
-    - letsencrypt
-    - letsencrypt-apache
+    - certbot
+    - certbot-apache
 
   - name: "let's encrypt!"
     command: >
@@ -166,7 +163,7 @@
     when: letsencrypt.changed
 
   - name: "let's encrypt: apache config after letsencrypt"
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/{{ server_name }}.conf
     notify: reload apache
     when: letsencrypt.changed
 
