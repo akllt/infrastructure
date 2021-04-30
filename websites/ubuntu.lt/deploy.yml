@@ -113,7 +113,11 @@
     register: letsencryptcert
 
   - name: set up apache virtual host
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/{{ server_name }}.conf
+    notify: reload apache
+
+  - name: enable apache site
+    file: src=../sites-available/{{ server_name }}.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf state=link
     notify: reload apache
 
   - name: create log dir
@@ -159,7 +163,7 @@
     when: letsencrypt.changed
 
   - name: "let's encrypt: apache config after letsencrypt"
-    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/{{ server_name }}.conf
+    template: src=templates/apache.conf dest=/etc/apache2/sites-available/{{ server_name }}.conf
     notify: reload apache
     when: letsencrypt.changed
 
