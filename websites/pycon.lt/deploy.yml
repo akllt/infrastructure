@@ -30,7 +30,11 @@
     register: letsencryptcert
 
   - name: set up apache virtual host
-    template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-enabled/pycon.lt.conf
+    template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-available/pycon.lt.conf
+    notify: reload apache
+
+  - name: enable apache site
+    file: src=../sites-available/pycon.lt.conf dest=/etc/apache2/sites-enabled/pycon.lt.conf state=link
     notify: reload apache
 
   - name: create log dir
@@ -74,7 +78,7 @@
     when: letsencrypt.changed
 
   - name: apache config after letsencrypt
-    template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-enabled/pycon.lt.conf
+    template: src=templates/apache.conf.j2 dest=/etc/apache2/sites-available/pycon.lt.conf
     notify: reload apache
     when: letsencrypt.changed
 
