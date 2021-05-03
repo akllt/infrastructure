@@ -8,7 +8,7 @@
     slug: ubuntult
     home: /opt/ubuntu.lt
     path: "{{ home }}/spirit"
-    shell_env_command_prefix: ". {{ home }}/.env && export DJANGO_SETTINGS_MODULE SECRET_KEY RECAPTCHA_PUBLIC_KEY RECAPTCHA_PRIVATE_KEY && "
+    shell_env_command_prefix: "set -a && . {{ home }}/.env && "
     server_admin: sirexas@gmail.com
     server_name: ubuntu.lt
     upgrade: false
