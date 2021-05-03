@@ -28,6 +28,7 @@
   - name: apt packages
     apt:
       name:
+      - acl
       - build-essential
       - postgresql
       - python3-psycopg2
@@ -195,3 +196,6 @@
 
   - name: reload apache
     service: name=apache2 state=reloaded
+
+  - name: restart gunicorn
+    service: name=ubuntult state=restarted
