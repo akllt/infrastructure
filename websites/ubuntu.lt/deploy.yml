@@ -8,6 +8,7 @@
     slug: ubuntult
     home: /opt/ubuntu.lt
     path: "{{ home }}/spirit"
+    shell_env_command_prefix: ". {{ home }}/.env && export DJANGO_SETTINGS_MODULE SECRET_KEY RECAPTCHA_PUBLIC_KEY RECAPTCHA_PRIVATE_KEY && "
     server_admin: sirexas@gmail.com
     server_name: ubuntu.lt
     upgrade: false
@@ -97,19 +98,27 @@
     become_user: "{{ slug }}"
 
   - name: update translation files
-    command: "{{ home }}/venv/bin/django-admin compilemessages -l lt chdir={{ path }}/ubuntult"
+    shell:
+      cmd: "{{ home }}/venv/bin/django-admin compilemessages -l lt"
+      chdir: "{{ path }}/ubuntult"
     become_user: "{{ slug }}"
 
   - name: run database migrations
-    command: "{{ home }}/venv/bin/python manage.py migrate chdir={{ path }}"
+    shell:
+      cmd: "{{ shell_env_command_prefix }}{{ home }}/venv/bin/python manage.py migrate"
+      chdir: "{{ path }}"
     become_user: "{{ slug }}"
 
   - name: collect static
-    command: "{{ home }}/venv/bin/python manage.py collectstatic --noinput chdir={{ path }}"
+    shell:
+      cmd: "{{ shell_env_command_prefix }}{{ home }}/venv/bin/python manage.py collectstatic --noinput"
+      chdir: "{{ path }}"
     become_user: "{{ slug }}"
 
   - name: rebuild search index
-    command: "{{ home }}/venv/bin/python manage.py rebuild_index --noinput chdir={{ path }}"
+    shell:
+      cmd: "{{ shell_env_command_prefix }}{{ home }}/venv/bin/python manage.py rebuild_index --noinput"
+      chdir: "{{ path }}"
     become_user: "{{ slug }}"
     when: upgrade
 
@@ -152,10 +161,12 @@
       - ca-certificates
 
   - name: "let's encrypt: pip packages"
-    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
-    with_items:
-    - certbot
-    - certbot-apache
+    pip:
+      virtualenv: /opt/letsencrypt
+      state: latest
+      name:
+      - certbot
+      - certbot-apache
 
   - name: "let's encrypt!"
     command: >
