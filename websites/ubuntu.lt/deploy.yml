@@ -36,7 +36,6 @@
       - python3-dev
       - virtualenv
       - apache2
-      - libapache2-mod-wsgi-py3
       - gettext
       - git
       # according to https://pillow.readthedocs.io/en/stable/installation.html
