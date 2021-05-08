@@ -121,6 +121,25 @@
     become_user: "{{ slug }}"
     when: upgrade
 
+  - name: ubuntult.socket
+    template:
+      dest: /etc/systemd/system/ubuntult.socket
+      src: ubuntult.socket
+      mode: 0644
+    notify: reload systemd
+
+  - name: ubuntult.service
+    template:
+      dest: /etc/systemd/system/ubuntult.service
+      src: ubuntult.service
+      mode: 0644
+    notify: reload systemd
+
+  - meta: flush_handlers
+
+  - name: enable systemd service
+    systemd: name=ubuntult state=started enabled=yes
+
   # Apache
 
   - name: enabled apache modules
@@ -200,6 +219,9 @@
 
 
   handlers:
+
+  - name: reload systemd
+    systemd: daemon_reload=yes
 
   - name: restart apache
     service: name=apache2 state=restarted
