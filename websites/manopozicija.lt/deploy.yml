@@ -125,10 +125,12 @@
   # Let's Encrypt
 
   - name: install letsencrypt
-    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
-    with_items:
-    - certbot
-    - certbot-apache
+    pip:
+      virtualenv: /opt/letsencrypt
+      state: latest
+      name:
+      - certbot
+      - certbot-apache
 
   - name: let's encrypt!
     command: >
