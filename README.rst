@@ -147,11 +147,12 @@ Apache rewrite rules, prievadai atsakingi servisai iš ``/etc/init.d``::
 dogma.akl.lt
 ------------
 
-:OS: Debian GNU/Linux 8.5
+:OS:
 :Kur: LMTA virtualus serveris
 :Kas prižiūri: Rimas Kudelis
+:Būklė: Išjungtas 2024 m.
 
-Ėmus gesti fizinio serverio diskams, duomenys iš jų perkelti į laikiną virtualią mašiną Lietuvos muzikos ir teatro akademijos serveryje. Tuo pačiu padarytas atnaujinimas. Dabar serveris laukia nuolatinių namų, tačiau joks pavojus trumpuoju laikotarpiu jam negresia.
+Serveryje gyveno keletas statinių ir PHP svetainių. Dauguma jų prarado aktualumą ir/arba buvo apleistos, todėl uždarytos, o kelios, kurios dar buvo aktualios, prieš serverį išjungiant iškeltos kitur.
 
 faktas.akl.lt
 -------------
@@ -159,9 +160,9 @@ faktas.akl.lt
 :OS: 
 :Kur: VU MIF kompiuterių laboratorija, antrame aukšte, Naugarduko g.
 :Kas prižiūri: niekas
-:Būklė: Neveikia nuo 2012 m.
+:Būklė: Neveikia nuo 2013 m.
 
-Serveryje turėjo „suktis“ tik HTTP ir FTP servisas. Serveris užgęso 2012 m., vėliau buvo dalinai, bet tik dalinai prikeltas. Neveikia jau daugiau kaip dvejus metus.
+Šis serveris atliko FTP serverio ir kai kurių atvirojo kodo projektų „veidrodžio“ funkciją, jame „sukosi“ tik FTP ir HTTP servisai.
 
 diedas.soften.ktu.lt
 --------------------
@@ -169,9 +170,9 @@ diedas.soften.ktu.lt
 :OS:
 :Kur: KTU
 :Kas prižiūri: niekas
-:Būklė: apleistas, neprižiūrimas
+:Būklė: Neveikia nuo 2016 m.
 
-Iki 2016 m. šis serveris aptarnavo AKL el. paštą, tačiau jau mažiausiai keletą metų nebuvo prižiūrimas. 2016 m. rugpjūtį serveris tapo nepasiekiamas.
+Iki 2016 m. šis serveris aptarnavo AKL el. paštą, tačiau jau mažiausiai keletą metų nebuvo prižiūrimas. 2016 m. rugpjūtį serveris sugedo ir tapo nepasiekiamas, paštas perkeltas į mail.akl.lt_.
 
 mail.akl.lt
 -----------
@@ -179,8 +180,10 @@ mail.akl.lt
 :OS: 
 :Kur: LMTA virtualus serveris
 :Kas prižiūri: Rimas Kudelis
+:Būklė: Išjungtas 2024 m.
 
 Sugedus diedas.soften.ktu.lt_ serveriui, AKL el. paštas perkeltas į LMTA virtualų serverį, kuriame veikia Rimo asmeninis el. paštas ir keletas interneto svetainių.
+2024 m. Rimas AKL pašto hostingą nutraukė, nes tuo metu buvo likusi tik viena realiai naudota @akl.lt pašto dėžutė – Donato G. Jam iš anksto pranešta, kad perkeltų su ja susietas paskyras, o galutinai paslauga nutraukta tik gavus iš jo „žalią šviesą“.
 
 Interneto svetainės
 ===================
@@ -260,7 +263,7 @@ lietuvybe.org
 :Vieta serveryje: ``/srv/zopes/akl-2.12``
 :Kas prižiūri:
 
-2012 m. visa aktuali info perkelta į http://lietuvybe.lt/
+2012 m. visa aktuali info perkelta į lietuvybė.lt_
 
 debian.akl.lt
 -------------
@@ -303,7 +306,7 @@ pycon.akl.lt
 :Migravimas: Perkelti
 :Naudojamas: taip
 :Serveris: ideja.akl.lt_
-:Viduriai: apache vhostas
+:Viduriai: Apache vhostas
 :Vieta serveryje: ``/etc/apache2/sites-available/pycon.akl.lt``
 :Kas prižiūri: Marius Gedminas
 
@@ -419,22 +422,26 @@ lists.akl.lt
 autocorr.akl.lt
 ---------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://autocorr.akl.lt
 :Serveris: dogma.akl.lt_
 :Viduriai: pavienis PHP skriptas
 :Vieta serveryje: ``/var/www/autocorr.akl.lt/``
 :Kas prižiūri: Rimas Kudelis
 
+Svetainė uždaryta, jos kodas ir gyvavimo metu surinkti automatinio taisymo pasiūlymai `padėti į GitHubą <https://github.com/rimas-kudelis/autocorr-lt/>`_.
+
 forumai.akl.lt
 --------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://forumai.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai: `SMF <http://www.simplemachines.org/>`
+:Viduriai: `SMF <https://www.simplemachines.org/>`_
 :Vieta serveryje: ``/var/www/forumai.akl.lt/``
-:Kas prižiūri:
+:Kas prižiūri: Rimas Kudelis
+
+Svetainė uždaryta. Ilgą laiką su pavienėmis išimtimis joje bandė registruotis tik šiukšlintojai, nevyko jokios aktyvios diskusijos. Prieš uždarant, svetainė visa apimtimi `suarchyvuota į archive.org <https://web.archive.org/web/https://forumai.akl.lt/>`_.
 
 gimp.akl.lt
 -----------
@@ -451,62 +458,74 @@ Redirectina į http://gimp.lt/ – Giedriaus Naudžiūno ir kompanijos prižiūr
 kde.akl.lt
 ----------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://kde.akl.lt
-:Serveris: dogma.akl.lt_
+:Serveris: (buvo dogma.akl.lt_)
 :Viduriai: WordPress
 :Vieta serveryje: ``/home/dgvirtual/www/kde/``
 :Kas prižiūri: Donatas Glodenis
 
-lietuvybe.lt
+Prieš išjungiant dogma.akl.lt_ serverį, Donatas su bendraminčiais svetainę iškėlė kitur.
+
+lietuvybė.lt
 ------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://lietuvybe.lt
-:Serveris: dogma.akl.lt_
-:Viduriai: `CMS Made Simple <http://www.cmsmadesimple.org/>`
-:Vieta serveryje: ``/var/www/lietuvybe.kt/``
+:Serveris: (buvo dogma.akl.lt_)
+:Viduriai: `CMS Made Simple <http://www.cmsmadesimple.org/>`_
+:Vieta serveryje: ``/var/www/lietuvybe.lt/``
 :Kas prižiūri: Rimas Kudelis
+
+Prieš išjungdamas dogma.akl.lt_ serverį, Rimas svetainę konvertavo į Hugo ir perkėlė į GitHub Pages.
 
 locost.lt
 ---------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://locost.lt
-:Serveris: dogma.akl.lt_
-:Viduriai: `phpBB <https://www.phpbb.com/>`
+:Serveris: (buvo dogma.akl.lt_)
+:Viduriai: `phpBB <https://www.phpbb.com/>`_
 :Vieta serveryje: ``/home/locost/www/phpBB3/``
 :Kas prižiūri: Albertas Agejevas
+
+Svetainė kažkada gyveno dogma.akl.lt_ serveryje, tačiau jau seniai iškelta kitur.
 
 opensuse.lt
 -----------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://opensuse.lt
-:Serveris: dogma.akl.lt_
-:Viduriai: `Joomla! <https://www.joomla.org/>`
+:Serveris: (buvo dogma.akl.lt_)
+:Viduriai: `Joomla! <https://www.joomla.org/>`_
 :Vieta serveryje: ``/home/opensuse/opensuse.lt/``
-:Kas prižiūri: Mindaugas Baranauskas
+:Kas prižiūri: Mindaugas Baranauskas 'embar'
+
+Prieš išjungiant dogma.akl.lt_ serverį, Rimas ir Mindaugas svetainę konvertavo į Hugo ir perkėlė į GitHub Pages. 
 
 planet.akl.lt
 -------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://planet.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai: `Planet Venus <http://intertwingly.net/code/venus/>`
+:Viduriai: `Planet Venus <http://intertwingly.net/code/venus/>`_
 :Vieta serveryje: ``/var/www/planet.akl.lt/``, ``/etc/planet`` ir kiti `planet-venus` paketo failai
-:Kas prižiūri:
+:Kas prižiūri: Rimas Kudelis
+
+Svetainė išjungta, nes dauguma sindikuotų blogų buvo išjungti, nebeaktyvūs ir pan. Prieš išjungiant, padarytas paskutinis `archive.org snapshotas <https://web.archive.org/web/https://planet.akl.lt/>`_.
 
 stats.akl.lt
 ------------
 
-:Migravimas: Perkelti?
+:Migravimas: Nereikalingas
 :Nuoroda: http://stats.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai: `PhpMyVisites <http://www.phpmyvisites.us/>`
+:Viduriai: `PhpMyVisites <http://www.phpmyvisites.us/>`_
 :Vieta serveryje: ``/var/www/stats.akl.lt/``
 :Kas prižiūri:
+
+Svetainė išjungta, nes ilgą laiką nebebuvo naudojama.
 
 ubuntu.lt
 ---------
@@ -526,22 +545,24 @@ Naujai kuriamo varianto kodas: https://github.com/python-dirbtuves/ubuntu.lt
 webmail.akl.lt
 --------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas
 :Nuoroda: http://webmail.akl.lt
 :Serveris: dogma.akl.lt_
-:Viduriai:
+:Viduriai: `RoundCube <https://roundcube.net/>`_
 :Vieta serveryje:
 :Kas prižiūri:
 
 atvirasalus.lt
 --------------
 
-:Migravimas: Perkelti
+:Migravimas: Nereikalingas?
 :Nuoroda: http://atvirasalus.lt
-:Serveris: dogma.akl.lt_
+:Serveris: (buvo dogma.akl.lt_)
 :Viduriai:
 :Vieta serveryje:
 :Kas prižiūri:
+
+Svetainė kažkada gyveno dogmoje, tačiau jau seniai iškelta kažkur kitur.
 
 haiku-os.lt
 -----------
@@ -550,21 +571,23 @@ haiku-os.lt
 :Nuoroda: http://haiku-os.lt
 :Serveris: dogma.akl.lt_
 :Viduriai: statiniai HTML failai
-:Vieta serveryje: /var/www/haiku-os.lt/
-:Kas prižiūri:
+:Vieta serveryje: ``/var/www/haiku-os.lt/``
+:Kas prižiūri: Rimas Kudelis
 
-Svetainė nebereikalinga – už domeną nebemokama, o jokių vertingų duomenų joje nėra.
+Svetainė uždaryta.
 
 
 blog.akl.lt
 -----------
 
-:Migravimas: Nereikalingas?
+:Migravimas: Nereikalingas
 :Nuoroda: http://blog.akl.lt
 :Serveris: dogma.akl.lt_
 :Viduriai: WordPress
 :Vieta serveryje: ``/var/www/blog.akl.lt``
 :Kas prižiūri:
+
+Svetainė 2022 m. išjungta, nes nuo 2011 metų joje nebuvo jokių naujų įrašų.
 
 coder.akl.lt
 ------------
@@ -675,6 +698,8 @@ lekp.akl.lt
 :Viduriai:
 :Vieta serveryje:
 :Kas prižiūri:
+
+Nepanašu, kad svetainė kada nors buvo naudojama. Tikroji LEKP svetainė yra https://lekp.info/.
 
 linux.akl.lt
 ------------
@@ -817,15 +842,15 @@ DNS
 
 ``/etc/bind/zone/*.zone``
 
-============= ======================================================================
+============= ==================================================================================================================================================
 Domenas       Pastabos
-------------- ----------------------------------------------------------------------
-akl.lt
+------------- --------------------------------------------------------------------------------------------------------------------------------------------------
+akl.lt        mirus idėjai, zona perkelta į serveriai.lt. Likvidavus AKL, serveriai.lt uždarė AKL paskyrą. Laikinai zoną perėmė Rimas, vėliau perleido Mantui K.
 baltix.lv
 gnome.lt      sprendžiant iš whois.lt, ši zona dabar gyvena serveriai.lt. NEAKTUALI?
 mozilla.lt    NEAKTUALI – ši zona dabar laikoma „Mozillos“ serveriuose
 wonhwado.lt   sprendžiant iš whois.lt, ši zona dabar gyvena domreg.lt. NEAKTUALI?
-============= ======================================================================
+============= ==================================================================================================================================================
 
 Bet kuriuo atveju, „Bind“ atnaujinti nebūtų sunku.
 
@@ -843,6 +868,7 @@ Neveikia:
 - http://files.akl.lt
 - http://mirror.akl.lt
 
+Neveikia nuo 2013 metų, žr. faktas.akl.lt_. `Paskutinis archive.org snapshotas. <https://web.archive.org/web/20121230175326/http://ftp.akl.lt/>`
 
 Migravimo planas į virtualius serverius
 =======================================
@@ -863,7 +889,7 @@ Galiausiai visi Dockerfile_'ai bus apjungti naudojant Fig_ ir saugomi vienoje
 repozitorijoje, todėl bus aišku, kas vyksta su projektais, kada paskutinį kartą
 jie buvo atnaujinti, kas ką naudoja ir pan.
 
-To tarpu host serveris bus iš esmės tuščias, jame suksis tik Docker_
+Tuo tarpu host serveris bus iš esmės tuščias, jame suksis tik Docker_
 konteineriai ir tvarkingai bus padėti taip vadinamie *docker volumes*.
 
 .. _Dockerfile: https://docs.docker.com/reference/builder/
